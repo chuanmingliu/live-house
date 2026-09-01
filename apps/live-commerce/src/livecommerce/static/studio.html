@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Host Studio · Live House</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <a class="brand" href="/" style="text-decoration:none"><span class="brand-mark">FL</span> Host Studio</a>
+      <div class="row wrap">
+        <span id="connectionBadge" class="badge">disconnected</span>
+        <span id="sessionBadge" class="badge mono">no session</span>
+      </div>
+    </header>
+
+    <section class="panel stack" style="margin-bottom:1rem">
+      <div class="toolbar">
+        <div>
+          <h2 style="margin:0 0 .25rem">Session control</h2>
+          <div id="sessionState" class="small muted">Create a demo room or attach to an existing session.</div>
+        </div>
+        <div class="row wrap">
+          <button id="bootstrapButton">Create demo room</button>
+          <button id="startButton" class="success" disabled>Start live</button>
+          <button id="endButton" class="danger" disabled>End</button>
+        </div>
+      </div>
+      <div class="row wrap">
+        <label class="grow">
+          <span class="small muted">Session ID</span>
+          <input id="sessionInput" placeholder="live_…" autocomplete="off" />
+        </label>
+        <button id="attachButton" class="secondary">Attach</button>
+        <a id="viewerLink" target="_blank" rel="noopener" hidden><button class="secondary">Open viewer</button></a>
+      </div>
+      <div id="statusLine" class="status-line small"></div>
+    </section>
+
+    <section class="studio-grid">
+      <div class="stack">
+        <div class="panel">
+          <div class="video-wrap">
+            <video id="programVideo" muted autoplay playsinline loop controls></video>
+            <div class="video-overlay">
+              <span id="liveChip" class="badge live live-chip">OFF AIR</span>
+              <span id="programClock" class="badge program-clock mono">00:00</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel stack">
+          <div class="toolbar">
+            <h2 style="margin:0">AI segment pipeline</h2>
+            <span class="badge">PLANNED → READY → ON AIR</span>
+          </div>
+          <label>
+            <span class="small muted">Scene prompt</span>
+            <textarea id="promptInput">A polished five-second product beauty shot on a modern studio table, gentle camera movement, clean commercial lighting.</textarea>
+          </label>
+          <button id="generateButton" disabled>Generate segment through fal adapter</button>
+          <div id="segmentStatus" class="status-line small"></div>
+          <div id="segmentList" class="stack"></div>
+        </div>
+
+        <div class="panel stack">
+          <h2 style="margin:0">Audience poll</h2>
+          <label>
+            <span class="small muted">Question</span>
+            <input id="pollQuestion" value="What should we demonstrate next?" />
+          </label>
+          <div class="row">
+            <input id="pollOptionA" value="Indoor setup" />
+            <input id="pollOptionB" value="Outdoor setup" />
+          </div>
+          <button id="pollButton" class="secondary" disabled>Open poll</button>
+        </div>
+      </div>
+
+      <aside class="stack">
+        <div class="panel stack">
+          <h2 style="margin:0">Product controls</h2>
+          <div id="productList" class="product-list"></div>
+          <button id="unpinButton" class="secondary" disabled>Unpin product</button>
+        </div>
+
+        <div class="panel stack">
+          <div class="toolbar">
+            <h2 style="margin:0">Event log</h2>
+            <span id="sequenceValue" class="badge mono">0</span>
+          </div>
+          <div id="eventLog" class="event-log"></div>
+        </div>
+      </aside>
+    </section>
+  </main>
+  <script type="module" src="/static/studio.js"></script>
+</body>
+</html>

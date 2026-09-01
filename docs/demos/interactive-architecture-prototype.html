@@ -1,0 +1,1437 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Interactive reference architecture for a fal-powered realtime live-commerce platform." />
+  <title>Interactive Real-time Live Commerce Architecture</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --surface: #ffffff;
+      --surface-2: #f8fafc;
+      --surface-3: #eef3f9;
+      --text: #132238;
+      --muted: #66758b;
+      --border: #dbe4f0;
+      --shadow: 0 12px 32px rgba(30, 55, 90, 0.10);
+      --shadow-soft: 0 5px 16px rgba(30, 55, 90, 0.08);
+      --purple: #7c3aed;
+      --purple-soft: #f3e8ff;
+      --blue: #1769d2;
+      --blue-soft: #eaf3ff;
+      --green: #17864c;
+      --green-soft: #eaf9f0;
+      --orange: #ea6a14;
+      --orange-soft: #fff2e8;
+      --red: #d92d20;
+      --red-soft: #fff0ef;
+      --cyan: #007a98;
+      --cyan-soft: #e9faff;
+      --connector: #62748a;
+      --grid: rgba(73, 94, 125, 0.08);
+      --stage-width: 1760px;
+      --stage-height: 1110px;
+    }
+
+    html[data-theme="dark"] {
+      --bg: #0b1220;
+      --surface: #111b2c;
+      --surface-2: #152238;
+      --surface-3: #1a2b44;
+      --text: #eef4ff;
+      --muted: #a8b5c8;
+      --border: #2c3d57;
+      --shadow: 0 12px 36px rgba(0, 0, 0, 0.35);
+      --shadow-soft: 0 5px 18px rgba(0, 0, 0, 0.28);
+      --purple-soft: rgba(124, 58, 237, 0.17);
+      --blue-soft: rgba(23, 105, 210, 0.16);
+      --green-soft: rgba(23, 134, 76, 0.17);
+      --orange-soft: rgba(234, 106, 20, 0.17);
+      --red-soft: rgba(217, 45, 32, 0.17);
+      --cyan-soft: rgba(0, 122, 152, 0.17);
+      --connector: #9baac0;
+      --grid: rgba(175, 195, 224, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-width: 320px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      overflow: hidden;
+    }
+
+    button, input { font: inherit; }
+    button { color: inherit; }
+
+    .app {
+      height: 100vh;
+      display: grid;
+      grid-template-rows: auto auto minmax(0, 1fr);
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 14px 18px 12px;
+      background: color-mix(in srgb, var(--surface) 94%, transparent);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(18px);
+      z-index: 20;
+    }
+
+    .brand {
+      min-width: 320px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 13px;
+      display: grid;
+      place-items: center;
+      color: white;
+      font-weight: 900;
+      font-size: 11px;
+      letter-spacing: .09em;
+      background: linear-gradient(135deg, #7c3aed, #1769d2 55%, #00a27a);
+      box-shadow: 0 8px 18px rgba(76, 79, 199, .28);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.2;
+      letter-spacing: -.02em;
+    }
+
+    .brand p {
+      margin: 3px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .health-strip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .metric {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 9px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--surface-2);
+      white-space: nowrap;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .metric strong { color: var(--text); font-size: 12px; }
+    .status-dot { width: 7px; height: 7px; border-radius: 50%; background: #18a568; box-shadow: 0 0 0 4px rgba(24, 165, 104, .12); }
+    .status-dot.degraded { background: var(--red); box-shadow: 0 0 0 4px rgba(217, 45, 32, .12); }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 18px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+      scrollbar-width: thin;
+      z-index: 15;
+    }
+
+    .tool-group { display: flex; align-items: center; gap: 7px; }
+    .tool-label { color: var(--muted); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; margin-right: 2px; }
+    .separator { width: 1px; height: 26px; background: var(--border); margin: 0 4px; }
+
+    .btn, .chip {
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      background: var(--surface-2);
+      padding: 7px 10px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 700;
+      transition: .18s ease;
+      white-space: nowrap;
+    }
+
+    .btn:hover, .chip:hover { transform: translateY(-1px); border-color: color-mix(in srgb, var(--blue) 55%, var(--border)); box-shadow: var(--shadow-soft); }
+    .btn.primary { color: white; border-color: transparent; background: linear-gradient(135deg, #1769d2, #7c3aed); }
+    .btn.ai { color: #9b3b00; border-color: #ffc79f; background: var(--orange-soft); }
+    html[data-theme="dark"] .btn.ai { color: #ffd5b7; }
+    .btn.danger { color: var(--red); background: var(--red-soft); border-color: color-mix(in srgb, var(--red) 35%, var(--border)); }
+    .btn.danger.active { color: white; background: var(--red); }
+    .chip.active { color: white; border-color: transparent; background: var(--blue); }
+    .icon-btn { width: 34px; height: 34px; padding: 0; display: grid; place-items: center; font-size: 15px; }
+
+    .search-wrap { position: relative; margin-left: auto; min-width: 225px; }
+    .search-wrap input {
+      width: 100%;
+      padding: 8px 30px 8px 10px;
+      border-radius: 9px;
+      border: 1px solid var(--border);
+      color: var(--text);
+      background: var(--surface-2);
+      outline: none;
+    }
+    .search-wrap input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px color-mix(in srgb, var(--blue) 18%, transparent); }
+    .search-count { position: absolute; right: 8px; top: 8px; color: var(--muted); font-size: 11px; }
+
+    .workspace {
+      min-height: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 360px;
+      gap: 0;
+    }
+
+    .diagram-viewport {
+      position: relative;
+      overflow: auto;
+      background-color: var(--bg);
+      background-image:
+        linear-gradient(var(--grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+      background-size: 24px 24px;
+      scroll-behavior: smooth;
+    }
+
+    .viewport-hud {
+      position: sticky;
+      z-index: 12;
+      top: 12px;
+      left: 12px;
+      width: max-content;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: color-mix(in srgb, var(--surface) 92%, transparent);
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(12px);
+    }
+
+    .zoom-label { min-width: 46px; text-align: center; color: var(--muted); font-size: 11px; font-weight: 800; }
+
+    #stageSizer { position: relative; margin: 10px auto 80px; }
+    .diagram-stage {
+      position: relative;
+      width: var(--stage-width);
+      height: var(--stage-height);
+      transform-origin: top left;
+      isolation: isolate;
+    }
+
+    #connections {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      overflow: visible;
+      pointer-events: none;
+    }
+
+    .architecture-grid {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      height: 100%;
+      display: grid;
+      grid-template-columns: 275px 640px 330px 355px;
+      grid-template-rows: 205px 535px 205px 105px;
+      gap: 18px;
+      padding: 22px;
+    }
+
+    .clients-column { grid-column: 1; grid-row: 1 / 4; display: grid; grid-template-rows: 1fr 1.1fr .9fr; gap: 14px; }
+    .edge-panel { grid-column: 2; grid-row: 1; }
+    .delivery-panel { grid-column: 3; grid-row: 1; }
+    .viewers-panel { grid-column: 4; grid-row: 1; }
+    .backend-panel { grid-column: 2; grid-row: 2; }
+    .ai-panel { grid-column: 3; grid-row: 2; }
+    .integrations-panel { grid-column: 4; grid-row: 2; }
+    .data-panel { grid-column: 2 / 4; grid-row: 3; }
+    .observability-panel { grid-column: 4; grid-row: 3; }
+    .cloud-panel { grid-column: 2 / 5; grid-row: 4; }
+
+    .panel {
+      --accent: var(--blue);
+      --soft: var(--blue-soft);
+      position: relative;
+      padding: 12px;
+      border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--border));
+      border-radius: 15px;
+      background: linear-gradient(180deg, color-mix(in srgb, var(--soft) 65%, var(--surface)), var(--surface));
+      box-shadow: var(--shadow-soft);
+      transition: opacity .2s ease, filter .2s ease, transform .2s ease;
+    }
+
+    .panel[data-layer="clients"] { --accent: var(--purple); --soft: var(--purple-soft); }
+    .panel[data-layer="edge"] { --accent: var(--purple); --soft: var(--purple-soft); }
+    .panel[data-layer="backend"] { --accent: var(--blue); --soft: var(--blue-soft); }
+    .panel[data-layer="ai"] { --accent: var(--orange); --soft: var(--orange-soft); }
+    .panel[data-layer="data"] { --accent: var(--green); --soft: var(--green-soft); }
+    .panel[data-layer="operations"] { --accent: var(--cyan); --soft: var(--cyan-soft); }
+    .panel[data-layer="infrastructure"] { --accent: #6f5bd3; --soft: var(--purple-soft); }
+
+    .panel.dimmed { opacity: .16; filter: grayscale(.6); }
+    .panel-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 9px; }
+    .panel-title { font-size: 12px; font-weight: 900; letter-spacing: .055em; text-transform: uppercase; color: var(--accent); }
+    .panel-note { color: var(--muted); font-size: 10px; }
+    .panel-grid { display: grid; gap: 8px; }
+    .panel-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+    .panel-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+    .panel-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
+    .backend-top { grid-template-columns: repeat(3, 1fr); }
+    .backend-bottom { grid-template-columns: 1.1fr .95fr 1.15fr .95fr; margin-top: 8px; }
+    .data-grid { grid-template-columns: repeat(5, 1fr); }
+    .ops-grid { grid-template-columns: repeat(2, 1fr); }
+    .cloud-grid { grid-template-columns: repeat(6, 1fr); }
+
+    .node {
+      --node-accent: var(--accent);
+      width: 100%;
+      min-width: 0;
+      position: relative;
+      text-align: left;
+      border: 1px solid color-mix(in srgb, var(--node-accent) 27%, var(--border));
+      border-radius: 11px;
+      padding: 9px;
+      color: var(--text);
+      background: color-mix(in srgb, var(--surface) 92%, var(--soft));
+      box-shadow: 0 2px 8px rgba(37, 58, 91, .045);
+      cursor: pointer;
+      transition: .18s ease;
+      overflow: hidden;
+    }
+
+    .node:hover { transform: translateY(-2px); border-color: var(--node-accent); box-shadow: 0 9px 20px color-mix(in srgb, var(--node-accent) 14%, transparent); }
+    .node:focus-visible { outline: 3px solid color-mix(in srgb, var(--blue) 25%, transparent); outline-offset: 2px; }
+    .node.selected { border-color: var(--node-accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--node-accent) 17%, transparent), 0 10px 24px color-mix(in srgb, var(--node-accent) 15%, transparent); }
+    .node.neighbor { border-color: color-mix(in srgb, var(--node-accent) 70%, var(--border)); }
+    .node.dimmed { opacity: .17; filter: grayscale(.7); }
+    .node.search-hit { box-shadow: 0 0 0 3px rgba(255, 188, 43, .34), 0 8px 20px rgba(150, 105, 0, .10); border-color: #d89800; }
+    .node.flow-active { animation: nodePulse .65s ease both; z-index: 5; }
+    .node.status-degraded { border-color: var(--red); background: var(--red-soft); }
+    .node.status-degraded::after {
+      content: "DEGRADED";
+      position: absolute;
+      top: 5px;
+      right: -24px;
+      transform: rotate(34deg);
+      padding: 2px 25px;
+      font-size: 7px;
+      font-weight: 900;
+      letter-spacing: .08em;
+      color: white;
+      background: var(--red);
+    }
+
+    @keyframes nodePulse {
+      0% { transform: scale(1); }
+      48% { transform: scale(1.045); box-shadow: 0 0 0 7px color-mix(in srgb, var(--node-accent) 18%, transparent); }
+      100% { transform: scale(1); }
+    }
+
+    .node-head { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+    .node-icon {
+      flex: 0 0 auto;
+      width: 29px;
+      height: 29px;
+      border-radius: 9px;
+      display: grid;
+      place-items: center;
+      color: white;
+      background: linear-gradient(145deg, color-mix(in srgb, var(--node-accent) 82%, white), var(--node-accent));
+      font-size: 9px;
+      font-weight: 900;
+      letter-spacing: .03em;
+    }
+    .node h3 { margin: 0; font-size: 11px; line-height: 1.2; letter-spacing: -.01em; }
+    .node p { margin: 0; color: var(--muted); font-size: 9.5px; line-height: 1.35; }
+    .node ul { margin: 5px 0 0 16px; padding: 0; color: var(--muted); font-size: 9px; line-height: 1.45; }
+    .node.compact { padding: 7px; }
+    .node.compact .node-icon { width: 25px; height: 25px; border-radius: 8px; font-size: 8px; }
+    .node.compact h3 { font-size: 10px; }
+    .node.compact p { font-size: 8.7px; }
+    .node.hero { height: 100%; padding: 12px; }
+    .node.hero .node-icon { width: 38px; height: 38px; border-radius: 12px; font-size: 10px; }
+    .node.hero h3 { font-size: 13px; }
+    .node.hero p { font-size: 10px; }
+
+    .ai-pipeline { display: grid; grid-template-rows: repeat(6, 1fr); gap: 7px; height: calc(100% - 31px); }
+    .ai-pipeline .node { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 7px; }
+    .ai-pipeline .node-head { margin: 0; }
+    .ai-pipeline .node p { align-self: center; }
+
+    .event-bus-node { margin-top: 9px; border-style: dashed; background: color-mix(in srgb, var(--blue-soft) 60%, var(--surface)); }
+
+    .connection {
+      fill: none;
+      stroke: var(--connector);
+      stroke-width: 1.8;
+      opacity: .33;
+      transition: opacity .18s ease, stroke-width .18s ease, filter .18s ease;
+    }
+    .connection.async { stroke-dasharray: 7 6; }
+    .connection.media { stroke: var(--purple); stroke-width: 2.5; }
+    .connection.secure { stroke: var(--green); }
+    .connection.fallback { stroke: var(--red); stroke-width: 2.4; stroke-dasharray: 4 5; display: none; }
+    .connection.highlight { opacity: 1; stroke-width: 3.3; filter: drop-shadow(0 0 3px color-mix(in srgb, currentColor 35%, transparent)); }
+    .connection.dimmed { opacity: .05; }
+    .connection.flow-active { opacity: 1; stroke-width: 4.2; stroke-dasharray: 10 7; animation: dashFlow .55s linear infinite; }
+    .connection.fallback.visible { display: block; opacity: .95; }
+    @keyframes dashFlow { to { stroke-dashoffset: -17; } }
+
+    .connection-label {
+      fill: var(--muted);
+      font-size: 9px;
+      font-weight: 800;
+      paint-order: stroke;
+      stroke: var(--surface);
+      stroke-width: 4px;
+      stroke-linejoin: round;
+      opacity: .76;
+    }
+
+    .flow-dot { filter: drop-shadow(0 0 4px rgba(23, 105, 210, .6)); }
+
+    .legend {
+      position: absolute;
+      z-index: 4;
+      right: 30px;
+      bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 10px;
+      background: color-mix(in srgb, var(--surface) 94%, transparent);
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      box-shadow: var(--shadow-soft);
+      font-size: 9px;
+      color: var(--muted);
+    }
+    .legend-item { display: flex; align-items: center; gap: 5px; }
+    .legend-line { width: 23px; height: 0; border-top: 2px solid var(--connector); }
+    .legend-line.async { border-top-style: dashed; }
+    .legend-line.media { border-color: var(--purple); border-top-width: 3px; }
+    .legend-line.fallback { border-color: var(--red); border-top-style: dashed; }
+
+    .side-panel {
+      min-width: 0;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
+      background: var(--surface);
+      border-left: 1px solid var(--border);
+      box-shadow: -10px 0 30px rgba(26, 48, 80, .06);
+      z-index: 10;
+    }
+
+    .side-tabs { display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid var(--border); }
+    .side-tab {
+      padding: 12px;
+      border: 0;
+      border-bottom: 2px solid transparent;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .side-tab.active { color: var(--blue); border-bottom-color: var(--blue); background: var(--blue-soft); }
+    .side-content { min-height: 0; overflow: auto; }
+    .tab-pane { display: none; padding: 18px; }
+    .tab-pane.active { display: block; }
+
+    .inspector-kicker { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+    .layer-pill { padding: 4px 8px; border-radius: 999px; background: var(--blue-soft); color: var(--blue); font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: .08em; }
+    .node-status { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 10px; }
+    .inspector h2 { margin: 0 0 8px; font-size: 20px; letter-spacing: -.03em; }
+    .inspector-summary { margin: 0 0 16px; color: var(--muted); font-size: 12px; line-height: 1.58; }
+    .detail-section { padding: 13px 0; border-top: 1px solid var(--border); }
+    .detail-section h4 { margin: 0 0 8px; font-size: 10px; text-transform: uppercase; letter-spacing: .09em; color: var(--muted); }
+    .detail-section ul { margin: 0; padding-left: 18px; font-size: 12px; line-height: 1.6; }
+    .tag-list { display: flex; flex-wrap: wrap; gap: 6px; }
+    .tag { padding: 5px 7px; border-radius: 7px; border: 1px solid var(--border); background: var(--surface-2); font-size: 10px; font-weight: 700; }
+    .slo-card { padding: 10px; border-radius: 10px; background: var(--green-soft); border: 1px solid color-mix(in srgb, var(--green) 30%, var(--border)); font-size: 11px; line-height: 1.45; }
+    .risk-card { padding: 10px; border-radius: 10px; background: var(--orange-soft); border: 1px solid color-mix(in srgb, var(--orange) 30%, var(--border)); font-size: 11px; line-height: 1.45; }
+
+    .overview-card {
+      padding: 13px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--surface-2);
+      margin-bottom: 10px;
+    }
+    .overview-card h3 { margin: 0 0 6px; font-size: 12px; }
+    .overview-card p { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.5; }
+    .quick-actions { display: grid; grid-template-columns: 1fr; gap: 8px; margin-top: 14px; }
+    .quick-actions button { text-align: left; padding: 10px; }
+
+    .activity-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .activity-header h2 { margin: 0; font-size: 16px; }
+    .log-list { display: grid; gap: 8px; }
+    .log-entry {
+      display: grid;
+      grid-template-columns: 54px 9px 1fr;
+      gap: 8px;
+      align-items: start;
+      padding: 9px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      animation: logIn .24s ease both;
+    }
+    @keyframes logIn { from { opacity: 0; transform: translateY(-4px); } }
+    .log-time { color: var(--muted); font-size: 9px; font-variant-numeric: tabular-nums; }
+    .log-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 2px; background: var(--blue); }
+    .log-dot.ai { background: var(--orange); }
+    .log-dot.media { background: var(--purple); }
+    .log-dot.commerce { background: var(--green); }
+    .log-dot.error { background: var(--red); }
+    .log-message { font-size: 10px; line-height: 1.45; }
+    .log-message strong { display: block; font-size: 10.5px; margin-bottom: 2px; }
+
+    .toast-stack { position: fixed; right: 380px; bottom: 18px; z-index: 50; display: grid; gap: 8px; pointer-events: none; }
+    .toast {
+      max-width: 340px;
+      padding: 10px 12px;
+      border-radius: 11px;
+      color: white;
+      background: #21344f;
+      box-shadow: 0 12px 32px rgba(0,0,0,.23);
+      font-size: 11px;
+      line-height: 1.45;
+      animation: toastIn .25s ease both;
+    }
+    .toast.error { background: var(--red); }
+    .toast.success { background: var(--green); }
+    @keyframes toastIn { from { opacity: 0; transform: translateY(8px); } }
+
+    .mobile-side-toggle { display: none; }
+
+    @media (max-width: 1050px) {
+      .health-strip { display: none; }
+      .workspace { grid-template-columns: 1fr; }
+      .side-panel {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: min(380px, 92vw);
+        transform: translateX(100%);
+        transition: transform .22s ease;
+      }
+      .side-panel.open { transform: translateX(0); }
+      .mobile-side-toggle { display: grid; }
+      .toast-stack { right: 18px; }
+    }
+
+    @media (max-width: 720px) {
+      .brand { min-width: 250px; }
+      .brand p { display: none; }
+      .topbar { padding: 10px 12px; }
+      .toolbar { padding: 8px 12px; }
+      .tool-label, .separator, .filter-group { display: none; }
+      .search-wrap { min-width: 160px; }
+    }
+
+    @media print {
+      body { overflow: visible; }
+      .topbar, .toolbar, .side-panel, .viewport-hud, .toast-stack { display: none !important; }
+      .workspace { display: block; }
+      .diagram-viewport { overflow: visible; background: white; }
+      #stageSizer { margin: 0; }
+      .diagram-stage { transform: scale(.56) !important; transform-origin: top left; }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">LIVE</div>
+      <div>
+        <h1>Real-time Live Commerce Architecture</h1>
+        <p>Interactive reference design · fal AI generation · scalable one-to-many delivery</p>
+      </div>
+    </div>
+    <div class="health-strip" aria-label="Example service-level indicators">
+      <div class="metric"><span class="status-dot" id="platformDot"></span><strong id="platformState">Healthy</strong></div>
+      <div class="metric">Playback <strong>99.95%</strong></div>
+      <div class="metric">Interaction p95 <strong>180 ms</strong></div>
+      <div class="metric">Program buffer <strong id="bufferMetric">24 s</strong></div>
+    </div>
+  </header>
+
+  <nav class="toolbar" aria-label="Architecture controls">
+    <div class="tool-group">
+      <span class="tool-label">Demonstrate</span>
+      <button class="btn primary" data-flow="broadcast">▶ Live broadcast</button>
+      <button class="btn ai" data-flow="ai">✦ AI segment</button>
+      <button class="btn" data-flow="purchase">▣ Purchase</button>
+      <button class="btn danger" id="outageBtn">Inject fal outage</button>
+    </div>
+    <div class="separator"></div>
+    <div class="tool-group filter-group" id="filterGroup">
+      <span class="tool-label">Layer</span>
+      <button class="chip active" data-filter="all">All</button>
+      <button class="chip" data-filter="clients">Clients</button>
+      <button class="chip" data-filter="edge">Edge</button>
+      <button class="chip" data-filter="backend">Backend</button>
+      <button class="chip" data-filter="ai">AI</button>
+      <button class="chip" data-filter="data">Data</button>
+      <button class="chip" data-filter="operations">Operations</button>
+      <button class="chip" data-filter="infrastructure">Cloud</button>
+    </div>
+    <div class="search-wrap">
+      <input id="searchInput" type="search" placeholder="Find a service…" aria-label="Find a service" />
+      <span class="search-count" id="searchCount"></span>
+    </div>
+    <button class="btn icon-btn" id="themeBtn" title="Toggle theme" aria-label="Toggle theme">◐</button>
+    <button class="btn icon-btn mobile-side-toggle" id="mobileSideBtn" title="Open details" aria-label="Open details">ⓘ</button>
+  </nav>
+
+  <main class="workspace">
+    <section class="diagram-viewport" id="viewport" aria-label="Interactive architecture diagram">
+      <div class="viewport-hud">
+        <button class="btn icon-btn" id="zoomOut" title="Zoom out">−</button>
+        <span class="zoom-label" id="zoomLabel">80%</span>
+        <button class="btn icon-btn" id="zoomIn" title="Zoom in">＋</button>
+        <button class="btn" id="fitBtn">Fit</button>
+        <button class="btn icon-btn" id="fullscreenBtn" title="Fullscreen">⛶</button>
+      </div>
+
+      <div id="stageSizer">
+        <div class="diagram-stage" id="diagramStage">
+          <svg id="connections" aria-hidden="true">
+            <defs>
+              <marker id="arrow-sync" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="strokeWidth">
+                <path d="M0,0 L8,4 L0,8 z" fill="#62748a"></path>
+              </marker>
+              <marker id="arrow-media" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="strokeWidth">
+                <path d="M0,0 L8,4 L0,8 z" fill="#7c3aed"></path>
+              </marker>
+              <marker id="arrow-secure" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="strokeWidth">
+                <path d="M0,0 L8,4 L0,8 z" fill="#17864c"></path>
+              </marker>
+              <marker id="arrow-fallback" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="strokeWidth">
+                <path d="M0,0 L8,4 L0,8 z" fill="#d92d20"></path>
+              </marker>
+            </defs>
+          </svg>
+
+          <div class="architecture-grid">
+            <div class="clients-column">
+              <section class="panel" data-layer="clients">
+                <div class="panel-header"><span class="panel-title">Host / Seller</span><span class="panel-note">Production control</span></div>
+                <button class="node hero" data-node="host-studio" data-layer="clients">
+                  <span class="node-head"><span class="node-icon">HS</span><span><h3>Host Studio</h3><p>Camera, rundown, product pins and emergency controls.</p></span></span>
+                  <ul><li>WebRTC / SRT / RTMP ingest</li><li>AI preview and approval</li><li>Stream-health controls</li></ul>
+                </button>
+              </section>
+
+              <section class="panel" data-layer="clients" style="--accent:var(--blue);--soft:var(--blue-soft)">
+                <div class="panel-header"><span class="panel-title">Viewer Apps</span><span class="panel-note">Web · iOS · Android</span></div>
+                <button class="node hero" data-node="viewer-apps" data-layer="clients">
+                  <span class="node-head"><span class="node-icon">VA</span><span><h3>Viewer Experience</h3><p>Low-latency playback and synchronized shopping.</p></span></span>
+                  <ul><li>Chat, reactions and voting</li><li>Media-time product cards</li><li>Cart and checkout</li></ul>
+                </button>
+              </section>
+
+              <section class="panel" data-layer="clients" style="--accent:var(--green);--soft:var(--green-soft)">
+                <div class="panel-header"><span class="panel-title">Operations</span><span class="panel-note">Human oversight</span></div>
+                <button class="node hero" data-node="admin-console" data-layer="clients">
+                  <span class="node-head"><span class="node-icon">AD</span><span><h3>Admin & Moderator Console</h3><p>Safety review, commerce operations and analytics.</p></span></span>
+                  <ul><li>Moderation queues</li><li>Users, products and orders</li><li>Incident and fallback controls</li></ul>
+                </button>
+              </section>
+            </div>
+
+            <section class="panel edge-panel" data-layer="edge">
+              <div class="panel-header"><span class="panel-title">Edge & Delivery Layer</span><span class="panel-note">Global ingress and protection</span></div>
+              <div class="panel-grid cols-4">
+                <button class="node compact" data-node="edge-cdn" data-layer="edge"><span class="node-head"><span class="node-icon">CDN</span><h3>CDN</h3></span><p>Static assets and media edge cache.</p></button>
+                <button class="node compact" data-node="edge-security" data-layer="edge"><span class="node-head"><span class="node-icon">WAF</span><h3>WAF & DDoS</h3></span><p>Abuse protection and request filtering.</p></button>
+                <button class="node compact" data-node="edge-lb" data-layer="edge"><span class="node-head"><span class="node-icon">LB</span><h3>Global Load Balancer</h3></span><p>Regional routing and health-based failover.</p></button>
+                <button class="node compact" data-node="edge-tls" data-layer="edge"><span class="node-head"><span class="node-icon">TLS</span><h3>TLS Termination</h3></span><p>Secure connections and certificate lifecycle.</p></button>
+              </div>
+            </section>
+
+            <section class="panel delivery-panel" data-layer="edge">
+              <div class="panel-header"><span class="panel-title">Live Streaming Delivery</span><span class="panel-note">Separate from inference</span></div>
+              <div class="panel-grid cols-2">
+                <button class="node" data-node="delivery-webrtc" data-layer="edge"><span class="node-head"><span class="node-icon">RTC</span><h3>Interactive Media</h3></span><p>WebRTC / SRT ingest, guests and host preview.</p></button>
+                <button class="node" data-node="delivery-hls" data-layer="edge"><span class="node-head"><span class="node-icon">ABR</span><h3>Mass Playback</h3></span><p>LL-HLS / DASH adaptive-bitrate program output.</p></button>
+              </div>
+            </section>
+
+            <section class="panel viewers-panel" data-layer="clients">
+              <div class="panel-header"><span class="panel-title">Global Viewers</span><span class="panel-note">One program, many viewers</span></div>
+              <button class="node hero" data-node="global-viewers" data-layer="clients">
+                <span class="node-head"><span class="node-icon">1:N</span><span><h3>Audience at Scale</h3><p>CDN playback plus regional realtime interaction gateways.</p></span></span>
+                <ul><li>Fast startup and ABR</li><li>Realtime room events</li><li>Seamless product purchase</li></ul>
+              </button>
+            </section>
+
+            <section class="panel backend-panel" data-layer="backend">
+              <div class="panel-header"><span class="panel-title">Core Backend Services</span><span class="panel-note">Transactional control plane</span></div>
+              <div class="panel-grid backend-top">
+                <button class="node" data-node="api-gateway" data-layer="backend"><span class="node-head"><span class="node-icon">API</span><h3>API Gateway</h3></span><p>REST / GraphQL, authentication, rate limits and routing.</p></button>
+                <button class="node" data-node="realtime-gateway" data-layer="backend"><span class="node-head"><span class="node-icon">WS</span><h3>Realtime Gateway</h3></span><p>WebSocket fanout, presence, sequence replay and snapshots.</p></button>
+                <button class="node" data-node="live-room" data-layer="backend"><span class="node-head"><span class="node-icon">ROOM</span><h3>Live Room Service</h3></span><p>Session lifecycle, program state, host controls and viewers.</p></button>
+              </div>
+              <div class="panel-grid backend-bottom">
+                <button class="node compact" data-node="chat" data-layer="backend"><span class="node-head"><span class="node-icon">CHAT</span><h3>Chat Service</h3></span><p>Messaging, moderation and history.</p></button>
+                <button class="node compact" data-node="engagement" data-layer="backend"><span class="node-head"><span class="node-icon">VOTE</span><h3>Engagement</h3></span><p>Polls, reactions, questions and anti-bot rules.</p></button>
+                <button class="node compact" data-node="commerce" data-layer="backend"><span class="node-head"><span class="node-icon">BUY</span><h3>Commerce Service</h3></span><p>Catalog, inventory, cart, checkout and orders.</p></button>
+                <button class="node compact" data-node="notification" data-layer="backend"><span class="node-head"><span class="node-icon">NTF</span><h3>Notification</h3></span><p>In-app, email, SMS, push and operational alerts.</p></button>
+              </div>
+              <button class="node event-bus-node" data-node="event-bus" data-layer="backend">
+                <span class="node-head"><span class="node-icon">BUS</span><span><h3>Event Bus / Streaming Layer</h3><p>Kafka, Redpanda, NATS JetStream or Redis Streams; producers and consumers remain loosely coupled.</p></span></span>
+              </button>
+            </section>
+
+            <section class="panel ai-panel" data-layer="ai">
+              <div class="panel-header"><span class="panel-title">AI Content Generation · fal</span><span class="panel-note">Deadline-aware pipeline</span></div>
+              <div class="ai-pipeline">
+                <button class="node compact" data-node="fal-request" data-layer="ai"><span class="node-head"><span class="node-icon">01</span><h3>Segment Request</h3></span><p>Approved prompt, product facts, references and deadline.</p></button>
+                <button class="node compact" data-node="fal-queue" data-layer="ai"><span class="node-head"><span class="node-icon">02</span><h3>Queue Submission</h3></span><p>Durable asynchronous job, idempotency and cost controls.</p></button>
+                <button class="node compact" data-node="fal-inference" data-layer="ai"><span class="node-head"><span class="node-icon">03</span><h3>Model Inference</h3></span><p>Text-to-video, image-to-video, speech or custom GPU app.</p></button>
+                <button class="node compact" data-node="fal-webhook" data-layer="ai"><span class="node-head"><span class="node-icon">04</span><h3>Signed Webhook</h3></span><p>Completion callback, verification and duplicate handling.</p></button>
+                <button class="node compact" data-node="fal-processing" data-layer="ai"><span class="node-head"><span class="node-icon">05</span><h3>Result Processing</h3></span><p>Decode, safety, product fidelity, QA and metadata.</p></button>
+                <button class="node compact" data-node="fal-media" data-layer="ai"><span class="node-head"><span class="node-icon">06</span><h3>Approved Media</h3></span><p>Stored, scheduled and ready for compositor insertion.</p></button>
+              </div>
+            </section>
+
+            <section class="panel integrations-panel" data-layer="backend" style="--accent:var(--purple);--soft:var(--purple-soft)">
+              <div class="panel-header"><span class="panel-title">External Integrations</span><span class="panel-note">Replaceable adapters</span></div>
+              <div class="panel-grid cols-2">
+                <button class="node compact" data-node="payments" data-layer="backend"><span class="node-head"><span class="node-icon">PAY</span><h3>Payments</h3></span><p>Stripe, Adyen, PayPal or local provider.</p></button>
+                <button class="node compact" data-node="shipping" data-layer="backend"><span class="node-head"><span class="node-icon">SHP</span><h3>Shipping</h3></span><p>Rates, labels, tracking and fulfillment.</p></button>
+                <button class="node compact" data-node="email" data-layer="backend"><span class="node-head"><span class="node-icon">EML</span><h3>Email / SMS</h3></span><p>Transactional and campaign messaging.</p></button>
+                <button class="node compact" data-node="push" data-layer="backend"><span class="node-head"><span class="node-icon">PSH</span><h3>Push</h3></span><p>FCM, APNs and campaign notifications.</p></button>
+                <button class="node compact" data-node="identity" data-layer="backend"><span class="node-head"><span class="node-icon">ID</span><h3>Identity</h3></span><p>OIDC, passkeys, roles and device trust.</p></button>
+                <button class="node compact" data-node="analytics" data-layer="backend"><span class="node-head"><span class="node-icon">BI</span><h3>Analytics / BI</h3></span><p>Product funnel, GMV and audience insights.</p></button>
+              </div>
+            </section>
+
+            <section class="panel data-panel" data-layer="data">
+              <div class="panel-header"><span class="panel-title">Data & Storage Layer</span><span class="panel-note">System of record and derived data</span></div>
+              <div class="panel-grid data-grid">
+                <button class="node compact" data-node="postgres" data-layer="data"><span class="node-head"><span class="node-icon">PG</span><h3>PostgreSQL</h3></span><p>Users, products, rooms, carts, orders and configuration.</p></button>
+                <button class="node compact" data-node="redis" data-layer="data"><span class="node-head"><span class="node-icon">RDS</span><h3>Redis</h3></span><p>Presence, room state, replay cache, rate limits and votes.</p></button>
+                <button class="node compact" data-node="object-storage" data-layer="data"><span class="node-head"><span class="node-icon">OBJ</span><h3>Object Storage</h3></span><p>Video, images, references, thumbnails and generated assets.</p></button>
+                <button class="node compact" data-node="search" data-layer="data"><span class="node-head"><span class="node-icon">IDX</span><h3>Search Engine</h3></span><p>Catalog, content, user and moderation investigation.</p></button>
+                <button class="node compact" data-node="warehouse" data-layer="data"><span class="node-head"><span class="node-icon">DWH</span><h3>Data Warehouse</h3></span><p>Events, reports, dashboards, experiments and attribution.</p></button>
+              </div>
+            </section>
+
+            <section class="panel observability-panel" data-layer="operations">
+              <div class="panel-header"><span class="panel-title">Observability</span><span class="panel-note">One trace across media, AI and orders</span></div>
+              <div class="panel-grid ops-grid">
+                <button class="node compact" data-node="logging" data-layer="operations"><span class="node-head"><span class="node-icon">LOG</span><h3>Logging</h3></span><p>Structured logs and audit trails.</p></button>
+                <button class="node compact" data-node="monitoring" data-layer="operations"><span class="node-head"><span class="node-icon">MET</span><h3>Monitoring</h3></span><p>SLIs, SLOs and capacity.</p></button>
+                <button class="node compact" data-node="tracing" data-layer="operations"><span class="node-head"><span class="node-icon">TRC</span><h3>Tracing</h3></span><p>OpenTelemetry correlations.</p></button>
+                <button class="node compact" data-node="alerting" data-layer="operations"><span class="node-head"><span class="node-icon">ALT</span><h3>Alerting</h3></span><p>On-call and automated mitigation.</p></button>
+              </div>
+            </section>
+
+            <section class="panel cloud-panel" data-layer="infrastructure">
+              <div class="panel-header"><span class="panel-title">Cloud Infrastructure</span><span class="panel-note">Highly available application platform; fal runs AI workloads</span></div>
+              <div class="panel-grid cloud-grid">
+                <button class="node compact" data-node="kubernetes" data-layer="infrastructure"><span class="node-head"><span class="node-icon">K8S</span><h3>Orchestration</h3></span><p>Kubernetes or managed containers.</p></button>
+                <button class="node compact" data-node="autoscaling" data-layer="infrastructure"><span class="node-head"><span class="node-icon">AS</span><h3>Autoscaling</h3></span><p>Pods, nodes and room gateways.</p></button>
+                <button class="node compact" data-node="multiaz" data-layer="infrastructure"><span class="node-head"><span class="node-icon">AZ</span><h3>Multi-AZ</h3></span><p>Failover and state replication.</p></button>
+                <button class="node compact" data-node="secrets" data-layer="infrastructure"><span class="node-head"><span class="node-icon">KMS</span><h3>Secrets</h3></span><p>KMS, vault and key rotation.</p></button>
+                <button class="node compact" data-node="cicd" data-layer="infrastructure"><span class="node-head"><span class="node-icon">CI</span><h3>CI/CD</h3></span><p>Tests, canaries and rollback.</p></button>
+                <button class="node compact" data-node="iac" data-layer="infrastructure"><span class="node-head"><span class="node-icon">IaC</span><h3>Infrastructure as Code</h3></span><p>Terraform, Helm and policy checks.</p></button>
+              </div>
+            </section>
+          </div>
+
+          <div class="legend" aria-label="Connector legend">
+            <span class="legend-item"><i class="legend-line"></i>Sync request</span>
+            <span class="legend-item"><i class="legend-line async"></i>Async event</span>
+            <span class="legend-item"><i class="legend-line media"></i>Media stream</span>
+            <span class="legend-item"><i class="legend-line fallback"></i>Fallback</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="side-panel" id="sidePanel">
+      <div class="side-tabs">
+        <button class="side-tab active" data-tab="details">Details</button>
+        <button class="side-tab" data-tab="activity">Activity <span id="activityCount"></span></button>
+      </div>
+      <div class="side-content">
+        <section class="tab-pane active inspector" id="detailsPane">
+          <div id="overviewContent">
+            <div class="inspector-kicker"><span class="layer-pill">Architecture overview</span><span class="node-status"><span class="status-dot"></span> Interactive</span></div>
+            <h2>Select a component</h2>
+            <p class="inspector-summary">Click a service to inspect its responsibilities, interfaces, recommended technologies, service objective, and degradation behavior. Hovering a component highlights its immediate dependencies.</p>
+            <div class="overview-card"><h3>1. Keep broadcast and inference separate</h3><p>fal produces or transforms media; a dedicated origin and CDN deliver one continuous program to the audience.</p></div>
+            <div class="overview-card"><h3>2. Commerce remains authoritative</h3><p>Prices, inventory, promotions and orders come from deterministic services, never from generated model output.</p></div>
+            <div class="overview-card"><h3>3. Hide generation latency with a buffer</h3><p>Prepare two or more approved segments ahead of air, reject stale results, and always carry a safe fallback.</p></div>
+            <div class="overview-card"><h3>4. Design for graceful degradation</h3><p>An AI outage must not interrupt playback, chat, cart, checkout or order creation.</p></div>
+            <div class="quick-actions">
+              <button class="btn primary" data-flow="broadcast">Run live-broadcast flow</button>
+              <button class="btn ai" data-flow="ai">Run fal AI-segment flow</button>
+              <button class="btn" data-flow="purchase">Run purchase flow</button>
+            </div>
+          </div>
+          <div id="nodeContent" hidden></div>
+        </section>
+
+        <section class="tab-pane" id="activityPane">
+          <div class="activity-header"><h2>Event activity</h2><button class="btn" id="clearLogBtn">Clear</button></div>
+          <div class="log-list" id="logList"></div>
+        </section>
+      </div>
+    </aside>
+  </main>
+</div>
+<div class="toast-stack" id="toastStack" aria-live="polite"></div>
+
+<script>
+(() => {
+  'use strict';
+
+  const STAGE_WIDTH = 1760;
+  const STAGE_HEIGHT = 1110;
+  const stage = document.getElementById('diagramStage');
+  const sizer = document.getElementById('stageSizer');
+  const viewport = document.getElementById('viewport');
+  const svg = document.getElementById('connections');
+  const detailPane = document.getElementById('detailsPane');
+  const overviewContent = document.getElementById('overviewContent');
+  const nodeContent = document.getElementById('nodeContent');
+  const sidePanel = document.getElementById('sidePanel');
+  const logList = document.getElementById('logList');
+  const activityCount = document.getElementById('activityCount');
+  const toastStack = document.getElementById('toastStack');
+
+  let zoom = 0.78;
+  let activeFilter = 'all';
+  let selectedNode = null;
+  let hoverNode = null;
+  let falOutage = false;
+  let runningFlow = false;
+  let logCount = 0;
+
+  const connections = [
+    { id:'host-edge', from:'host-studio', to:'edge-lb', type:'secure', label:'control plane' },
+    { id:'host-media', from:'host-studio', to:'delivery-webrtc', type:'media', label:'live ingest' },
+    { id:'viewer-edge', from:'viewer-apps', to:'edge-lb', type:'secure', label:'API + room token' },
+    { id:'admin-api', from:'admin-console', to:'api-gateway', type:'secure', label:'operator commands' },
+    { id:'edge-api', from:'edge-lb', to:'api-gateway', type:'sync', label:'routed request' },
+    { id:'edge-rt', from:'edge-lb', to:'realtime-gateway', type:'sync' },
+    { id:'ingest-abr', from:'delivery-webrtc', to:'delivery-hls', type:'media', label:'compose + encode' },
+    { id:'abr-cdn', from:'delivery-hls', to:'edge-cdn', type:'media' },
+    { id:'cdn-viewers', from:'edge-cdn', to:'global-viewers', type:'media', label:'one-to-many playback' },
+    { id:'viewers-rt', from:'global-viewers', to:'realtime-gateway', type:'async', label:'chat / votes' },
+    { id:'api-room', from:'api-gateway', to:'live-room', type:'sync' },
+    { id:'api-commerce', from:'api-gateway', to:'commerce', type:'sync' },
+    { id:'api-identity', from:'api-gateway', to:'identity', type:'secure' },
+    { id:'rt-chat', from:'realtime-gateway', to:'chat', type:'async' },
+    { id:'rt-engagement', from:'realtime-gateway', to:'engagement', type:'async' },
+    { id:'rt-room', from:'realtime-gateway', to:'live-room', type:'async' },
+    { id:'chat-bus', from:'chat', to:'event-bus', type:'async' },
+    { id:'engagement-bus', from:'engagement', to:'event-bus', type:'async' },
+    { id:'room-bus', from:'live-room', to:'event-bus', type:'async' },
+    { id:'commerce-bus', from:'commerce', to:'event-bus', type:'async' },
+    { id:'bus-notify', from:'event-bus', to:'notification', type:'async' },
+    { id:'room-fal', from:'live-room', to:'fal-request', type:'async', label:'scene plan' },
+    { id:'fal-1', from:'fal-request', to:'fal-queue', type:'async' },
+    { id:'fal-2', from:'fal-queue', to:'fal-inference', type:'async' },
+    { id:'fal-3', from:'fal-inference', to:'fal-webhook', type:'async' },
+    { id:'fal-4', from:'fal-webhook', to:'fal-processing', type:'async' },
+    { id:'fal-5', from:'fal-processing', to:'fal-media', type:'sync' },
+    { id:'fal-air', from:'fal-media', to:'delivery-hls', type:'media', label:'approved segment' },
+    { id:'fal-storage', from:'fal-processing', to:'object-storage', type:'sync' },
+    { id:'commerce-pay', from:'commerce', to:'payments', type:'secure' },
+    { id:'commerce-ship', from:'commerce', to:'shipping', type:'async' },
+    { id:'notify-email', from:'notification', to:'email', type:'async' },
+    { id:'notify-push', from:'notification', to:'push', type:'async' },
+    { id:'bus-analytics', from:'event-bus', to:'analytics', type:'async' },
+    { id:'commerce-pg', from:'commerce', to:'postgres', type:'sync' },
+    { id:'room-redis', from:'live-room', to:'redis', type:'sync' },
+    { id:'chat-redis', from:'chat', to:'redis', type:'sync' },
+    { id:'analytics-warehouse', from:'analytics', to:'warehouse', type:'async' },
+    { id:'backend-monitor', from:'event-bus', to:'monitoring', type:'async' },
+    { id:'fal-trace', from:'fal-webhook', to:'tracing', type:'async' },
+    { id:'fallback-edge', from:'live-room', to:'delivery-hls', type:'fallback', label:'host / approved fallback' }
+  ];
+
+  const nodeDetails = {
+    'host-studio': {
+      title:'Host / Seller Studio', layer:'Clients', summary:'The producer-facing control surface for live capture, show rundown, product pins, audience controls, AI preview and emergency takeover.',
+      responsibilities:['Capture camera and microphone with device checks','Control live-room lifecycle and scene rundown','Approve or reject generated segments before broadcast','Provide immediate cut-to-host, slate and fallback controls'],
+      interfaces:['WebRTC, SRT or RTMP media ingest','REST commands for session and commerce state','WebSocket events for room health and audience feedback'],
+      tech:['React','WebRTC','SRT/RTMP','WebCodecs','OIDC'], slo:'Control actions acknowledged at p95 < 250 ms; standby ingest available for priority shows.', risk:'If the studio disconnects, keep the existing program on air and allow a secondary producer or fallback playlist to take control.'
+    },
+    'viewer-apps': {
+      title:'Viewer Applications', layer:'Clients', summary:'Web and mobile clients that combine adaptive live playback with chat, polls, product discovery, cart and checkout.',
+      responsibilities:['Start playback quickly and adapt bitrate','Synchronize product pins to media program time','Recover room state after reconnect','Keep checkout usable even when AI or chat is degraded'],
+      interfaces:['LL-HLS / DASH playback','REST commerce APIs','Regional WebSocket gateway'],
+      tech:['React / React Native','Native AV players','WebSocket','Service workers'], slo:'Viewer join p95 < 2 s; rebuffer ratio < 1%; product pin alignment within ±300 ms.', risk:'Never couple checkout availability to the realtime connection; cache a safe room snapshot and independently retry commerce requests.'
+    },
+    'admin-console': {
+      title:'Admin & Moderator Console', layer:'Clients', summary:'A privileged operations surface for content safety, products, users, orders, incident response and AI output approval.',
+      responsibilities:['Review prompts and generated media','Manage bans, rate limits and policy escalations','Inspect order and inventory incidents','Operate emergency cut and platform degradation controls'],
+      interfaces:['Privileged REST APIs','Audit event stream','Media preview URLs'], tech:['React','RBAC/ABAC','Immutable audit log'], slo:'All privileged actions are attributable, authorized and durably audited.', risk:'Apply least privilege, device-aware authentication and dual approval for high-impact controls.'
+    },
+    'edge-cdn': {
+      title:'CDN', layer:'Edge & Delivery', summary:'Caches static assets and distributes the packaged live program to a global audience without multiplying AI inference sessions.',
+      responsibilities:['Deliver adaptive media segments close to viewers','Absorb traffic spikes','Protect the media origin','Expose playback telemetry'], interfaces:['LL-HLS / DASH','Signed playback URLs','Origin shield'], tech:['Managed CDN','Multi-CDN steering','Origin shield'], slo:'Playback availability 99.95% or better with regional failover.', risk:'Keep at least one alternate playback domain or provider for major commercial events.'
+    },
+    'edge-security': {
+      title:'WAF & DDoS Protection', layer:'Edge & Delivery', summary:'Filters abusive traffic before it reaches application, realtime and commerce services.', responsibilities:['Rate-limit abusive clients','Block common application exploits','Protect login, voting and checkout endpoints','Feed abuse intelligence to trust systems'], interfaces:['HTTP edge policies','Bot signals','Security event stream'], tech:['WAF','DDoS protection','Bot management'], slo:'Mitigation must not materially increase p95 API latency.', risk:'Overly broad rules can block legitimate flash-sale traffic; rehearse expected peak patterns.'
+    },
+    'edge-lb': {
+      title:'Global Load Balancer', layer:'Edge & Delivery', summary:'Routes API and realtime traffic to the healthiest nearby region while preserving room affinity where needed.', responsibilities:['Health-based regional routing','TLS-aware traffic policies','Failover and traffic shifting','WebSocket-compatible affinity'], interfaces:['HTTPS','WSS','Health probes'], tech:['Anycast DNS / global LB','Regional ingress'], slo:'Regional failover within the defined recovery objective without reconnect storms.', risk:'Room state and replay must be recoverable in the destination region before aggressive failover.'
+    },
+    'edge-tls': {
+      title:'TLS Termination', layer:'Edge & Delivery', summary:'Centralizes certificates, modern transport policy and secure service ingress.', responsibilities:['Certificate issuance and rotation','Enforce modern cipher and protocol policy','Forward verified identity context','Support signed origin requests'], interfaces:['TLS 1.2+','mTLS to sensitive origins'], tech:['Managed certificates','KMS'], slo:'Zero expired certificates; automated renewal with alerting.', risk:'Do not forward spoofable identity headers from untrusted network paths.'
+    },
+    'delivery-webrtc': {
+      title:'Interactive Media Transport', layer:'Live Streaming', summary:'Carries host ingest, guest video, preview feeds and subsecond interactive media where the latency requirement justifies it.', responsibilities:['Accept host and guest media','Provide low-latency preview','Forward sources to cloud composition','Collect packet-loss and jitter telemetry'], interfaces:['WebRTC','SRT','RTMP'], tech:['SFU','TURN','SRT gateway'], slo:'Stable ingest under realistic mobile packet loss, with a tested standby route.', risk:'Do not use one WebRTC peer per mass viewer unless the product truly requires subsecond media and the cost is accepted.'
+    },
+    'delivery-hls': {
+      title:'Mass Playback Pipeline', layer:'Live Streaming', summary:'Composes, encodes and packages one continuous adaptive-bitrate program for efficient one-to-many delivery.', responsibilities:['Compose host, AI segments and deterministic overlays','Encode an ABR ladder','Package low-latency HLS or DASH','Maintain an uninterrupted program timeline'], interfaces:['Media ingest','Generated asset store','CDN origin'], tech:['FFmpeg / GStreamer','Cloud compositor','LL-HLS'], slo:'No unhandled broadcast gaps; audio/video sync remains stable throughout long sessions.', risk:'Operate active/standby composition for high-value shows and keep a pre-approved fallback playlist.'
+    },
+    'global-viewers': {
+      title:'Global Viewer Population', layer:'Clients', summary:'The audience receives a shared media program over CDN while interaction events use horizontally scalable regional gateways.', responsibilities:['Consume adaptive media','Send chat, reactions and votes','Receive product and room state','Complete purchases through authoritative APIs'], interfaces:['CDN playback','WebSocket room channel','REST commerce API'], tech:['Web / iOS / Android'], slo:'Scale media egress by viewers while AI-generation capacity scales primarily by active channels.', risk:'Bot and fraud controls must distinguish high excitement from coordinated manipulation.'
+    },
+    'api-gateway': {
+      title:'API Gateway', layer:'Core Backend', summary:'The authenticated entry point for session, catalog, cart, checkout, order and administrative APIs.', responsibilities:['Authenticate and authorize requests','Apply quotas and idempotency','Route to versioned services','Propagate correlation IDs'], interfaces:['REST / GraphQL','OIDC / JWT','Internal service RPC'], tech:['Go or TypeScript','Envoy / managed API gateway','OpenAPI'], slo:'Checkout path availability 99.99%; p95 latency budgets enforced by route.', risk:'Avoid putting business logic in the gateway; keep policies declarative and independently testable.'
+    },
+    'realtime-gateway': {
+      title:'Realtime Gateway', layer:'Core Backend', summary:'Maintains room WebSockets, presence, ordered sequence numbers, missed-event replay and snapshot recovery.', responsibilities:['Authenticate short-lived room tokens','Fan out chat, polls, product pins and status','Track connection and presence state','Replay events or return a complete snapshot on reconnect'], interfaces:['WSS','Redis / event bus','Room service'], tech:['Go / Elixir / Node.js','Redis','NATS / Kafka'], slo:'Interaction p95 < 250 ms in the primary region; reconnect restores correct state without duplicate actions.', risk:'Shed low-value reactions before chat, product events or commerce notifications during overload.'
+    },
+    'live-room': {
+      title:'Live Room Service', layer:'Core Backend', summary:'Owns the live-session state machine, program timeline, active product, poll, segment queue and operator controls.', responsibilities:['Transition room states safely','Publish authoritative session snapshots','Maintain program-time anchors','Initiate AI scene workflows and fallbacks'], interfaces:['REST commands','WebSocket events','Event bus','Workflow engine'], tech:['Go / TypeScript','PostgreSQL','Redis','Temporal'], slo:'State transitions are idempotent and ordered; fallback activation < 1 s.', risk:'Never use process-local memory as the only source of live-room truth in a multi-replica deployment.'
+    },
+    'chat': {
+      title:'Chat Service', layer:'Core Backend', summary:'Processes realtime messages with abuse prevention, moderation and recoverable history.', responsibilities:['Accept and sequence messages','Apply text moderation and spam rules','Publish approved messages','Support removal and moderator actions'], interfaces:['Realtime gateway','Moderation providers','Event bus'], tech:['Streaming moderation','Redis','Search index'], slo:'Moderation and fanout remain within the room interaction latency budget.', risk:'Raw audience text must never be passed directly into the AI generation prompt.'
+    },
+    'engagement': {
+      title:'Engagement Service', layer:'Core Backend', summary:'Handles reactions, polls, deterministic voting, questions and anti-manipulation controls.', responsibilities:['Open and close polls','Accept one valid vote per rule set','Calculate winners deterministically','Detect bots and coordinated abuse'], interfaces:['Realtime gateway','Event bus','Redis'], tech:['Redis atomic operations','Fraud rules','Event streaming'], slo:'Vote acknowledgment p95 < 250 ms; final totals reproducible from durable events.', risk:'The LLM may interpret a winning option but must never secretly select the winner.'
+    },
+    'commerce': {
+      title:'Commerce Service', layer:'Core Backend', summary:'The system of authority for catalog, price, promotion, inventory reservation, cart, checkout, order and refund workflows.', responsibilities:['Serve versioned product facts','Reserve inventory atomically','Revalidate price and eligibility at checkout','Create orders idempotently and process refunds'], interfaces:['REST / GraphQL','Payment and shipping adapters','PostgreSQL','Event bus'], tech:['PostgreSQL','Workflow engine','Idempotency store'], slo:'Checkout availability 99.99%; zero duplicate orders and zero platform-caused oversell.', risk:'Do not let generated scripts or video pixels become authoritative for price, inventory or legal claims.'
+    },
+    'notification': {
+      title:'Notification Service', layer:'Core Backend', summary:'Routes in-app, email, SMS, push and operational notifications through provider-independent policies.', responsibilities:['Template transactional messages','Route by locale and preference','Retry provider failures safely','Publish delivery status'], interfaces:['Event bus','Email/SMS providers','Push providers'], tech:['Queue workers','Template service'], slo:'Order confirmations are durable and idempotent even when an external provider is unavailable.', risk:'Marketing notifications and mandatory transactional messages require different consent and retry policies.'
+    },
+    'event-bus': {
+      title:'Event Bus / Streaming Layer', layer:'Core Backend', summary:'Decouples chat, room, commerce, AI and analytics workflows through durable, versioned domain events.', responsibilities:['Persist ordered events where required','Fan out to independent consumers','Support replay and backpressure','Carry correlation and causation IDs'], interfaces:['Kafka / Redpanda / NATS JetStream','Transactional outbox'], tech:['Schema registry','Dead-letter topics','Consumer groups'], slo:'No silent event loss; consumers are idempotent and observable.', risk:'Treat event schemas as public contracts—version them and avoid leaking sensitive data.'
+    },
+    'fal-request': {
+      title:'fal Segment Request', layer:'AI Content Generation', summary:'A structured, policy-approved scene plan containing references, product facts, deadline, fallback and cost ceiling.', responsibilities:['Compile approved model arguments','Attach continuity references','Set generation and stale deadlines','Select an allowlisted model policy'], interfaces:['Scene planner','fal orchestrator'], tech:['Typed Pydantic schemas','Policy engine'], slo:'Every request is reproducible from versioned inputs and policy metadata.', risk:'Never forward arbitrary user prompts, arbitrary model IDs or secrets from the browser.'
+    },
+    'fal-queue': {
+      title:'fal Queue Submission', layer:'AI Content Generation', summary:'Submits longer-running generation through durable asynchronous inference and tracks the fal request ID.', responsibilities:['Submit through a server-side fal client','Store job and correlation identifiers','Apply budget and concurrency limits','Set signed webhook callback'], interfaces:['fal queue API','Workflow engine','Job store'], tech:['fal-client','Temporal'], slo:'Submission is idempotent and bounded by show-level budget and deadline.', risk:'Bound retries and stop once a scene can no longer be ready before its intended air time.'
+    },
+    'fal-inference': {
+      title:'fal Model Inference', layer:'AI Content Generation', summary:'Executes an allowlisted text-to-video, image-to-video, audio, avatar or custom GPU workload on fal infrastructure.', responsibilities:['Run the selected model','Expose status and result metadata','Scale warm capacity for scheduled events','Support model fallback through orchestration'], interfaces:['fal Model APIs','Custom fal.App or realtime endpoint'], tech:['fal Serverless','GPU models','Realtime WebSocket / WebRTC where justified'], slo:'Model-specific generation target plus enough margin for QA before the segment deadline.', risk:'Inference latency is not complete scene-to-air latency; account for moderation, transfer, QA and composition.'
+    },
+    'fal-webhook': {
+      title:'Signed fal Webhook', layer:'AI Content Generation', summary:'Receives completion or failure callbacks, verifies authenticity and processes retries idempotently.', responsibilities:['Verify timestamp and ED25519 signature','Hash and bind the raw request body','Deduplicate repeated delivery','Reject callbacks for unknown or stale jobs'], interfaces:['Public HTTPS webhook','fal JWKS','Workflow engine'], tech:['ED25519','Idempotency table'], slo:'Valid callbacks are acknowledged quickly and processed exactly once at the domain level.', risk:'Never trust a webhook merely because the request ID looks valid; verify the full signature construction.'
+    },
+    'fal-processing': {
+      title:'AI Result Processing & QA', layer:'AI Content Generation', summary:'Validates generated media before it becomes eligible for broadcast.', responsibilities:['Decode and inspect duration, resolution and frame rate','Run visual, audio and product-fidelity checks','Reject black, frozen or unsafe output','Transcode and create provenance metadata'], interfaces:['Moderation models','Object storage','Segment workflow'], tech:['FFmpeg','Computer vision QA','Human approval queue'], slo:'100% of generated media passes the defined policy gates before air.', risk:'Low-confidence product or identity verification must route to a human or fallback, never silently pass.'
+    },
+    'fal-media': {
+      title:'Approved Media', layer:'AI Content Generation', summary:'A validated asset in the rolling program buffer, with a fixed intended air time and safe fallback.', responsibilities:['Store immutable approved version','Publish segment-ready event','Insert into program scheduler','Reject late or superseded results'], interfaces:['Object storage','Program scheduler','Cloud compositor'], tech:['Signed URLs','Media manifest','Segment state machine'], slo:'At least two ready-to-air segments or a safe host/fallback path for AI-led shows.', risk:'A result that arrives after its stale time must never jump back into the live program.'
+    },
+    'payments': {
+      title:'Payment Gateway', layer:'External Integration', summary:'Authorizes and captures payments while returning idempotent status to the commerce workflow.', responsibilities:['Tokenize payment details','Authorize and capture','Send signed webhooks','Support refunds and disputes'], interfaces:['Provider SDK/API','Signed webhook'], tech:['Stripe / Adyen / PayPal / local PSP'], slo:'Duplicate callbacks cannot create duplicate orders or captures.', risk:'Keep payment data outside application logs and follow the applicable PCI scope.'
+    },
+    'shipping': {
+      title:'Shipping & Fulfillment', layer:'External Integration', summary:'Provides rates, labels, tracking and downstream fulfillment status.', responsibilities:['Calculate shipping options','Create labels or fulfillment requests','Track shipment events','Handle address exceptions'], interfaces:['Carrier / 3PL APIs','Event bus'], tech:['Adapter layer','Workflow retries'], slo:'A shipping-provider outage does not corrupt paid order state.', risk:'Model estimated delivery dates as external promises with explicit freshness and confidence.'
+    },
+    'identity': {
+      title:'Identity Provider', layer:'External Integration', summary:'Authenticates viewers, merchants, hosts and operators and supplies trustworthy role claims.', responsibilities:['Login and token issuance','MFA/passkeys for privileged users','Role and organization membership','Device and risk signals'], interfaces:['OIDC / OAuth 2.1','SCIM where needed'], tech:['Auth0 / Firebase / Cognito / enterprise IdP'], slo:'Privileged access uses phishing-resistant authentication where possible.', risk:'Do not use display names or client-provided roles as authorization evidence.'
+    },
+    'postgres': {
+      title:'PostgreSQL', layer:'Data & Storage', summary:'Transactional system of record for identity links, products, rooms, carts, orders and configuration.', responsibilities:['Enforce relational constraints','Support atomic inventory and checkout operations','Back the transactional outbox','Maintain audit-friendly history'], interfaces:['SQL','Change data capture'], tech:['Managed PostgreSQL','Read replicas','PITR'], slo:'Recovery point and recovery time align with order and inventory criticality.', risk:'Use migrations, bounded queries and connection pooling; flash-sale traffic can expose lock contention.'
+    },
+    'redis': {
+      title:'Redis', layer:'Data & Storage', summary:'Low-latency ephemeral and replay state for room presence, votes, rate limits, leaderboards and short event windows.', responsibilities:['Store presence and heartbeats','Support atomic counters and deduplication','Cache room snapshots','Provide bounded replay windows'], interfaces:['RESP','Pub/sub or streams'], tech:['Managed Redis / Valkey'], slo:'Loss of cache does not lose authoritative orders or unrecoverable room state.', risk:'Define eviction and persistence intentionally; do not confuse fast cache state with the durable source of truth.'
+    },
+    'object-storage': {
+      title:'Object Storage & Media CDN', layer:'Data & Storage', summary:'Stores product references, generated outputs, approved broadcast assets, recordings and thumbnails with explicit access controls.', responsibilities:['Private reference storage','Lifecycle and retention policies','Signed access URLs','Replication and integrity checks'], interfaces:['S3-compatible API','CDN origin'], tech:['Object storage','KMS encryption','Signed URLs'], slo:'Approved program assets remain available for the show duration and replay obligations.', risk:'Generated provider URLs may have different retention or ACL behavior; copy approved assets into controlled storage.'
+    },
+    'warehouse': {
+      title:'Analytics Warehouse', layer:'Data & Storage', summary:'Combines media, interaction, AI cost and commerce events for funnels, attribution, experiments and operations.', responsibilities:['Ingest versioned events','Compute GMV and conversion funnels','Attribute product pins and scenes','Track cost per generated second and live minute'], interfaces:['Batch / streaming ingestion','BI tools'], tech:['ClickHouse / BigQuery / Snowflake'], slo:'Business metrics are reproducible from governed event definitions.', risk:'Do not expose raw personal data broadly; use purpose-limited models and retention.'
+    },
+    'monitoring': {
+      title:'Monitoring & SLOs', layer:'Observability', summary:'Measures media, interaction, AI, commerce and infrastructure health through actionable service-level indicators.', responsibilities:['Track latency, availability and saturation','Measure buffer depth and deadline misses','Alert on checkout and playback impact','Drive capacity and cost tuning'], interfaces:['Prometheus-compatible metrics','Dashboards'], tech:['Prometheus','Grafana','fal analytics export'], slo:'Alerts are tied to user impact rather than raw infrastructure noise.', risk:'Averages hide livestream incidents; monitor p95/p99, per-region and per-session outliers.'
+    },
+    'tracing': {
+      title:'Distributed Tracing', layer:'Observability', summary:'Correlates viewer actions, room events, scene jobs, fal request IDs, checkout and orders across service boundaries.', responsibilities:['Propagate trace and correlation IDs','Join async event causation','Sample high-value errors and purchases','Link media and AI timelines'], interfaces:['OpenTelemetry'], tech:['OpenTelemetry','Jaeger / Tempo'], slo:'A production incident can be followed end-to-end without manual log guessing.', risk:'Redact secrets, payment details and raw private prompts from spans.'
+    },
+    'kubernetes': {
+      title:'Application Orchestration', layer:'Cloud Infrastructure', summary:'Runs the non-fal application services, realtime gateways and workers with controlled deployment and recovery.', responsibilities:['Schedule services and workers','Expose health and readiness checks','Enforce resource boundaries','Roll out and roll back safely'], interfaces:['Container runtime','Ingress','Service mesh where justified'], tech:['Kubernetes / ECS / Cloud Run'], slo:'No single application node is required to keep a live session running.', risk:'Do not put media state or room authority solely inside a disposable pod.'
+    },
+    'secrets': {
+      title:'Secrets & Key Management', layer:'Cloud Infrastructure', summary:'Protects fal keys, payment secrets, signing keys and database credentials with controlled rotation.', responsibilities:['Encrypt and rotate secrets','Issue workload identity','Audit access','Separate environments and tenants'], interfaces:['KMS / Vault APIs'], tech:['Cloud KMS','Vault','Workload identity'], slo:'No long-lived fal key appears in browser or mobile code.', risk:'A leaked server credential can create unbounded AI spend; combine rotation with endpoint allowlists and cost caps.'
+    }
+  };
+
+  const fallbackDetail = (node) => ({
+    title: node.querySelector('h3')?.textContent || node.dataset.node,
+    layer: node.dataset.layer || 'Architecture',
+    summary: node.querySelector('p')?.textContent || 'Architecture component.',
+    responsibilities: ['Provide its bounded capability through a versioned interface','Emit observable events and health signals','Fail without corrupting adjacent domains'],
+    interfaces: ['Versioned API or event contract'],
+    tech: ['Replaceable implementation'],
+    slo: 'Define a measurable service objective before production rollout.',
+    risk: 'Document failure behavior and keep a tested degradation path.'
+  });
+
+  const flows = {
+    broadcast: {
+      label:'Live broadcast', kind:'media',
+      path:['host-studio','delivery-webrtc','delivery-hls','edge-cdn','global-viewers'],
+      messages:[
+        ['Host feed accepted','Camera and microphone enter the interactive ingest path.'],
+        ['Program composed','Host video, approved overlays and audio are mixed into one timeline.'],
+        ['Adaptive stream packaged','The encoder creates a low-latency bitrate ladder.'],
+        ['CDN fanout active','One program is cached and distributed close to viewers.'],
+        ['Audience playing','Viewers receive low-latency playback without one inference session each.']
+      ]
+    },
+    ai: {
+      label:'fal AI segment', kind:'ai',
+      path:['live-room','fal-request','fal-queue','fal-inference','fal-webhook','fal-processing','fal-media','delivery-hls','edge-cdn','global-viewers'],
+      messages:[
+        ['Scene plan approved','The room selects a structured scene with a deadline and fallback.'],
+        ['Request compiled','Only approved product facts, references and model arguments are included.'],
+        ['Job submitted','The fal request ID is stored and the workflow waits asynchronously.'],
+        ['GPU inference running','The selected allowlisted model generates the segment.'],
+        ['Signed webhook received','Timestamp, body hash and ED25519 signature are verified.'],
+        ['Media quality checked','Safety, duration, product fidelity and technical QA are evaluated.'],
+        ['Segment ready','Approved media enters the rolling program buffer.'],
+        ['Segment inserted','The compositor places the asset on the continuous program timeline.'],
+        ['Media distributed','The CDN fans out the updated program.'],
+        ['Viewers see segment','The audience sees the generated scene and synchronized product state.']
+      ]
+    },
+    purchase: {
+      label:'Purchase', kind:'commerce',
+      path:['viewer-apps','edge-lb','api-gateway','commerce','payments','commerce','postgres','event-bus','notification','viewer-apps'],
+      messages:[
+        ['Buy action submitted','The viewer sends a cart or checkout request with an idempotency key.'],
+        ['Request routed','The edge applies security and regional routing.'],
+        ['Identity authorized','The API gateway validates the user and request policy.'],
+        ['Checkout revalidated','Price, promotion, eligibility and inventory are checked authoritatively.'],
+        ['Payment authorized','The provider returns an idempotent result or signed callback.'],
+        ['Order workflow continues','The commerce service reconciles payment and inventory state.'],
+        ['Order committed','The transactional database stores the order and outbox event atomically.'],
+        ['Domain event published','Independent fulfillment, analytics and notification consumers react.'],
+        ['Confirmation routed','The notification service selects in-app, email, SMS or push.'],
+        ['Viewer confirmed','The application receives durable order status.']
+      ]
+    }
+  };
+
+  function getNode(id) { return document.querySelector(`[data-node="${id}"]`); }
+
+  function setZoom(next, center = false) {
+    const previous = zoom;
+    zoom = Math.min(1.18, Math.max(.48, Math.round(next * 100) / 100));
+    stage.style.transform = `scale(${zoom})`;
+    sizer.style.width = `${STAGE_WIDTH * zoom}px`;
+    sizer.style.height = `${STAGE_HEIGHT * zoom}px`;
+    document.getElementById('zoomLabel').textContent = `${Math.round(zoom * 100)}%`;
+    if (center) {
+      const ratio = zoom / previous;
+      viewport.scrollLeft = (viewport.scrollLeft + viewport.clientWidth / 2) * ratio - viewport.clientWidth / 2;
+      viewport.scrollTop = (viewport.scrollTop + viewport.clientHeight / 2) * ratio - viewport.clientHeight / 2;
+    }
+    requestAnimationFrame(drawConnections);
+  }
+
+  function fitStage() {
+    const available = Math.max(320, viewport.clientWidth - 28);
+    const next = Math.min(.96, available / STAGE_WIDTH);
+    setZoom(next);
+    viewport.scrollTo({ left: 0, top: 0, behavior:'smooth' });
+  }
+
+  function anchor(el, towardEl) {
+    const stageRect = stage.getBoundingClientRect();
+    const a = el.getBoundingClientRect();
+    const b = towardEl.getBoundingClientRect();
+    const ax = (a.left - stageRect.left) / zoom;
+    const ay = (a.top - stageRect.top) / zoom;
+    const aw = a.width / zoom;
+    const ah = a.height / zoom;
+    const bx = (b.left - stageRect.left) / zoom + (b.width / zoom) / 2;
+    const by = (b.top - stageRect.top) / zoom + (b.height / zoom) / 2;
+    const acx = ax + aw / 2;
+    const acy = ay + ah / 2;
+    const dx = bx - acx;
+    const dy = by - acy;
+    if (Math.abs(dx) > Math.abs(dy) * .72) {
+      return dx >= 0 ? { x: ax + aw, y: acy, side:'right' } : { x: ax, y: acy, side:'left' };
+    }
+    return dy >= 0 ? { x: acx, y: ay + ah, side:'bottom' } : { x: acx, y: ay, side:'top' };
+  }
+
+  function makePath(start, end) {
+    const horizontal = start.side === 'left' || start.side === 'right';
+    if (horizontal) {
+      const bend = Math.max(36, Math.abs(end.x - start.x) * .48);
+      const c1x = start.x + (start.side === 'right' ? bend : -bend);
+      const c2x = end.x + (end.side === 'left' ? -bend : bend);
+      return `M ${start.x} ${start.y} C ${c1x} ${start.y}, ${c2x} ${end.y}, ${end.x} ${end.y}`;
+    }
+    const bend = Math.max(30, Math.abs(end.y - start.y) * .48);
+    const c1y = start.y + (start.side === 'bottom' ? bend : -bend);
+    const c2y = end.y + (end.side === 'top' ? -bend : bend);
+    return `M ${start.x} ${start.y} C ${start.x} ${c1y}, ${end.x} ${c2y}, ${end.x} ${end.y}`;
+  }
+
+  function drawConnections() {
+    svg.querySelectorAll('.dynamic').forEach(el => el.remove());
+    connections.forEach(conn => {
+      const from = getNode(conn.from);
+      const to = getNode(conn.to);
+      if (!from || !to) return;
+      const start = anchor(from, to);
+      const end = anchor(to, from);
+      const d = makePath(start, end);
+      const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+      path.setAttribute('id', conn.id);
+      path.setAttribute('d', d);
+      path.setAttribute('class', `dynamic connection ${conn.type || 'sync'} ${conn.type === 'fallback' && falOutage ? 'visible' : ''}`);
+      const marker = conn.type === 'media' ? 'arrow-media' : conn.type === 'secure' ? 'arrow-secure' : conn.type === 'fallback' ? 'arrow-fallback' : 'arrow-sync';
+      path.setAttribute('marker-end', `url(#${marker})`);
+      path.dataset.from = conn.from;
+      path.dataset.to = conn.to;
+      svg.appendChild(path);
+      if (conn.label) {
+        const text = document.createElementNS('http://www.w3.org/2000/svg','text');
+        text.setAttribute('class','dynamic connection-label');
+        const textPath = document.createElementNS('http://www.w3.org/2000/svg','textPath');
+        textPath.setAttribute('href', `#${conn.id}`);
+        textPath.setAttribute('startOffset','50%');
+        textPath.setAttribute('text-anchor','middle');
+        textPath.textContent = conn.label;
+        text.appendChild(textPath);
+        svg.appendChild(text);
+      }
+    });
+    refreshGraphState();
+  }
+
+  function neighborsOf(id) {
+    const set = new Set([id]);
+    connections.forEach(c => {
+      if (c.from === id) set.add(c.to);
+      if (c.to === id) set.add(c.from);
+    });
+    return set;
+  }
+
+  function refreshGraphState() {
+    const focus = hoverNode || selectedNode;
+    const neighborhood = focus ? neighborsOf(focus) : null;
+    const query = document.getElementById('searchInput').value.trim().toLowerCase();
+    let hits = 0;
+
+    document.querySelectorAll('.node').forEach(node => {
+      const layerVisible = activeFilter === 'all' || node.dataset.layer === activeFilter;
+      const detail = nodeDetails[node.dataset.node] || fallbackDetail(node);
+      const haystack = `${detail.title} ${detail.summary} ${detail.layer} ${(detail.tech || []).join(' ')}`.toLowerCase();
+      const searchHit = !!query && haystack.includes(query);
+      if (searchHit) hits++;
+      const graphVisible = !neighborhood || neighborhood.has(node.dataset.node);
+      node.classList.toggle('selected', node.dataset.node === selectedNode);
+      node.classList.toggle('neighbor', !!focus && neighborhood.has(node.dataset.node) && node.dataset.node !== focus);
+      node.classList.toggle('search-hit', searchHit);
+      node.classList.toggle('dimmed', !layerVisible || (!!focus && !graphVisible) || (!!query && !searchHit));
+    });
+
+    document.querySelectorAll('.panel').forEach(panel => {
+      const visible = activeFilter === 'all' || panel.dataset.layer === activeFilter || panel.querySelector(`.node[data-layer="${activeFilter}"]`);
+      panel.classList.toggle('dimmed', !visible);
+    });
+
+    document.querySelectorAll('.connection').forEach(path => {
+      const from = path.dataset.from;
+      const to = path.dataset.to;
+      const connected = !!focus && (from === focus || to === focus);
+      const filterVisible = activeFilter === 'all' || getNode(from)?.dataset.layer === activeFilter || getNode(to)?.dataset.layer === activeFilter;
+      path.classList.toggle('highlight', connected);
+      path.classList.toggle('dimmed', !filterVisible || (!!focus && !connected));
+    });
+
+    document.getElementById('searchCount').textContent = query ? `${hits}` : '';
+  }
+
+  function selectNode(id) {
+    selectedNode = id;
+    const node = getNode(id);
+    const d = nodeDetails[id] || fallbackDetail(node);
+    overviewContent.hidden = true;
+    nodeContent.hidden = false;
+    nodeContent.innerHTML = `
+      <div class="inspector-kicker">
+        <span class="layer-pill">${escapeHtml(d.layer)}</span>
+        <span class="node-status"><span class="status-dot ${node.classList.contains('status-degraded') ? 'degraded' : ''}"></span>${node.classList.contains('status-degraded') ? 'Degraded' : 'Healthy'}</span>
+      </div>
+      <h2>${escapeHtml(d.title)}</h2>
+      <p class="inspector-summary">${escapeHtml(d.summary)}</p>
+      <div class="detail-section"><h4>Responsibilities</h4><ul>${d.responsibilities.map(x => `<li>${escapeHtml(x)}</li>`).join('')}</ul></div>
+      <div class="detail-section"><h4>Interfaces</h4><div class="tag-list">${d.interfaces.map(x => `<span class="tag">${escapeHtml(x)}</span>`).join('')}</div></div>
+      <div class="detail-section"><h4>Suggested technology</h4><div class="tag-list">${d.tech.map(x => `<span class="tag">${escapeHtml(x)}</span>`).join('')}</div></div>
+      <div class="detail-section"><h4>Service objective</h4><div class="slo-card">${escapeHtml(d.slo)}</div></div>
+      <div class="detail-section"><h4>Failure & degradation</h4><div class="risk-card">${escapeHtml(d.risk)}</div></div>
+    `;
+    switchTab('details');
+    refreshGraphState();
+    if (window.innerWidth <= 1050) sidePanel.classList.add('open');
+  }
+
+  function clearSelection() {
+    selectedNode = null;
+    overviewContent.hidden = false;
+    nodeContent.hidden = true;
+    refreshGraphState();
+  }
+
+  function switchTab(tab) {
+    document.querySelectorAll('.side-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    document.getElementById(tab === 'details' ? 'detailsPane' : 'activityPane').classList.add('active');
+  }
+
+  function escapeHtml(value) {
+    return String(value).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+  }
+
+  function nowTime() {
+    return new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+  }
+
+  function addLog(title, message, kind='system') {
+    logCount++;
+    activityCount.textContent = `(${logCount})`;
+    const entry = document.createElement('div');
+    entry.className = 'log-entry';
+    entry.innerHTML = `<span class="log-time">${nowTime()}</span><span class="log-dot ${kind}"></span><span class="log-message"><strong>${escapeHtml(title)}</strong>${escapeHtml(message)}</span>`;
+    logList.prepend(entry);
+    while (logList.children.length > 80) logList.lastElementChild.remove();
+  }
+
+  function toast(message, kind='') {
+    const el = document.createElement('div');
+    el.className = `toast ${kind}`;
+    el.textContent = message;
+    toastStack.appendChild(el);
+    setTimeout(() => { el.style.opacity = '0'; el.style.transform = 'translateY(8px)'; }, 2800);
+    setTimeout(() => el.remove(), 3200);
+  }
+
+  function findConnection(a,b) {
+    return connections.find(c => (c.from === a && c.to === b) || (c.from === b && c.to === a));
+  }
+
+  function animateDot(connectionId, kind='system') {
+    const path = document.getElementById(connectionId);
+    if (!path) return;
+    const circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    circle.setAttribute('r','6');
+    circle.setAttribute('class','flow-dot dynamic');
+    circle.setAttribute('fill', kind === 'ai' ? '#ea6a14' : kind === 'commerce' ? '#17864c' : kind === 'media' ? '#7c3aed' : '#1769d2');
+    const motion = document.createElementNS('http://www.w3.org/2000/svg','animateMotion');
+    motion.setAttribute('dur','.62s');
+    motion.setAttribute('fill','freeze');
+    const mpath = document.createElementNS('http://www.w3.org/2000/svg','mpath');
+    mpath.setAttribute('href',`#${connectionId}`);
+    motion.appendChild(mpath);
+    circle.appendChild(motion);
+    svg.appendChild(circle);
+    motion.beginElement();
+    setTimeout(() => circle.remove(), 720);
+  }
+
+  const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+  async function runFlow(name) {
+    if (runningFlow) { toast('A demonstration is already running.'); return; }
+    const flow = flows[name];
+    if (!flow) return;
+    if (name === 'ai' && falOutage) {
+      await runOutageFallback();
+      return;
+    }
+    runningFlow = true;
+    switchTab('activity');
+    addLog(`${flow.label} started`, 'Following the highlighted components and connectors.', flow.kind);
+    toast(`${flow.label} demonstration started`);
+
+    for (let i = 0; i < flow.path.length; i++) {
+      const id = flow.path[i];
+      const node = getNode(id);
+      if (node) {
+        node.classList.add('flow-active');
+        node.scrollIntoView({behavior:'smooth', block:'center', inline:'center'});
+      }
+      const msg = flow.messages[i] || [id, ''];
+      addLog(msg[0], msg[1], flow.kind);
+      if (i > 0) {
+        const c = findConnection(flow.path[i-1], id);
+        const p = c && document.getElementById(c.id);
+        if (p) {
+          p.classList.add('flow-active');
+          animateDot(c.id, flow.kind);
+          await sleep(640);
+          p.classList.remove('flow-active');
+        } else {
+          await sleep(480);
+        }
+      } else {
+        await sleep(430);
+      }
+      node?.classList.remove('flow-active');
+    }
+    addLog(`${flow.label} complete`, 'The end-to-end path completed without coupling unrelated failure domains.', flow.kind);
+    toast(`${flow.label} flow complete`, 'success');
+    runningFlow = false;
+  }
+
+  async function runOutageFallback() {
+    if (runningFlow) return;
+    runningFlow = true;
+    switchTab('activity');
+    addLog('AI segment requested', 'The room attempts to prepare the next generated segment.', 'ai');
+    getNode('live-room')?.classList.add('flow-active');
+    await sleep(450);
+    getNode('live-room')?.classList.remove('flow-active');
+    getNode('fal-request')?.classList.add('flow-active');
+    addLog('Circuit breaker open', 'fal generation is unavailable; the request is not retried past the scene deadline.', 'error');
+    await sleep(650);
+    getNode('fal-request')?.classList.remove('flow-active');
+    const fallback = document.getElementById('fallback-edge');
+    fallback?.classList.add('flow-active','visible');
+    animateDot('fallback-edge','error');
+    getNode('delivery-hls')?.classList.add('flow-active');
+    addLog('Fallback activated', 'The compositor keeps the human host or an approved clip on air. Playback and checkout remain healthy.', 'media');
+    await sleep(900);
+    fallback?.classList.remove('flow-active');
+    getNode('delivery-hls')?.classList.remove('flow-active');
+    addLog('Graceful degradation confirmed', 'AI is degraded, but the media and commerce paths continue independently.', 'commerce');
+    toast('fal unavailable: host/fallback program remains on air', 'error');
+    runningFlow = false;
+  }
+
+  function toggleFalOutage() {
+    falOutage = !falOutage;
+    document.querySelectorAll('[data-layer="ai"].node').forEach(n => n.classList.toggle('status-degraded', falOutage));
+    document.getElementById('outageBtn').classList.toggle('active', falOutage);
+    document.getElementById('outageBtn').textContent = falOutage ? 'Recover fal service' : 'Inject fal outage';
+    document.getElementById('platformState').textContent = falOutage ? 'AI degraded' : 'Healthy';
+    document.getElementById('platformDot').classList.toggle('degraded', falOutage);
+    document.getElementById('bufferMetric').textContent = falOutage ? '18 s fallback' : '24 s';
+    drawConnections();
+    if (falOutage) {
+      addLog('fal outage injected', 'AI nodes are degraded. Broadcast and commerce remain available by design.', 'error');
+      toast('fal outage injected — run the AI flow to see fallback behavior', 'error');
+    } else {
+      addLog('fal service recovered', 'New segment generation may resume after health checks and circuit-breaker recovery.', 'ai');
+      toast('fal service recovered', 'success');
+    }
+    if (selectedNode?.startsWith('fal-')) selectNode(selectedNode);
+  }
+
+  document.querySelectorAll('.node').forEach(node => {
+    node.addEventListener('click', e => { e.stopPropagation(); selectNode(node.dataset.node); });
+    node.addEventListener('mouseenter', () => { hoverNode = node.dataset.node; refreshGraphState(); });
+    node.addEventListener('mouseleave', () => { hoverNode = null; refreshGraphState(); });
+  });
+
+  document.querySelectorAll('[data-flow]').forEach(btn => btn.addEventListener('click', () => runFlow(btn.dataset.flow)));
+  document.querySelectorAll('.side-tab').forEach(btn => btn.addEventListener('click', () => switchTab(btn.dataset.tab)));
+
+  document.getElementById('filterGroup').addEventListener('click', e => {
+    const chip = e.target.closest('[data-filter]');
+    if (!chip) return;
+    activeFilter = chip.dataset.filter;
+    document.querySelectorAll('[data-filter]').forEach(c => c.classList.toggle('active', c === chip));
+    refreshGraphState();
+  });
+
+  document.getElementById('searchInput').addEventListener('input', refreshGraphState);
+  document.getElementById('zoomIn').addEventListener('click', () => setZoom(zoom + .08, true));
+  document.getElementById('zoomOut').addEventListener('click', () => setZoom(zoom - .08, true));
+  document.getElementById('fitBtn').addEventListener('click', fitStage);
+  document.getElementById('outageBtn').addEventListener('click', toggleFalOutage);
+  document.getElementById('themeBtn').addEventListener('click', () => {
+    const html = document.documentElement;
+    html.dataset.theme = html.dataset.theme === 'dark' ? 'light' : 'dark';
+    localStorage.setItem('architecture-theme', html.dataset.theme);
+    setTimeout(drawConnections, 30);
+  });
+  document.getElementById('fullscreenBtn').addEventListener('click', async () => {
+    try {
+      if (!document.fullscreenElement) await document.documentElement.requestFullscreen();
+      else await document.exitFullscreen();
+    } catch (_) { toast('Fullscreen is unavailable in this browser.'); }
+  });
+  document.getElementById('mobileSideBtn').addEventListener('click', () => sidePanel.classList.toggle('open'));
+  document.getElementById('clearLogBtn').addEventListener('click', () => { logList.innerHTML=''; logCount=0; activityCount.textContent=''; });
+
+  stage.addEventListener('click', e => {
+    if (!e.target.closest('.node')) clearSelection();
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      clearSelection();
+      sidePanel.classList.remove('open');
+    }
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      document.getElementById('searchInput').focus();
+    }
+  });
+
+  window.addEventListener('resize', () => { drawConnections(); if (window.innerWidth > 1050) sidePanel.classList.remove('open'); });
+  window.addEventListener('load', () => {
+    const savedTheme = localStorage.getItem('architecture-theme');
+    if (savedTheme) document.documentElement.dataset.theme = savedTheme;
+    setZoom(zoom);
+    drawConnections();
+    setTimeout(() => { if (viewport.clientWidth < 1420) fitStage(); }, 70);
+    addLog('Architecture loaded', 'Select any component or run an end-to-end demonstration.', 'system');
+  });
+})();
+</script>
+</body>
+</html>

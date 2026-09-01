@@ -1,0 +1,597 @@
+{
+  "project": {
+    "name": "Live House",
+    "slug": "live-house",
+    "version": "0.1.0",
+    "status": "development",
+    "phase": "increment_0_1_complete",
+    "generated_at": "2026-09-01",
+    "timezone_context": "Asia/Tokyo"
+  },
+  "canonical_application": "apps/live-commerce",
+  "verified_test_result": "21 passed",
+  "next_increment": {
+    "id": "0.2",
+    "name": "real_fal_staging_integration",
+    "backlog": "docs/NEXT_SPRINT_0.2.md"
+  },
+  "entrypoints": {
+    "cli": "live-commerce",
+    "application": "livecommerce.main:app",
+    "studio": "/studio",
+    "viewer": "/viewer",
+    "architecture": "/architecture",
+    "openapi": "/docs"
+  },
+  "key_artifacts": {
+    "overall_architecture": "docs/assets/live-house-overall-architecture.png",
+    "interactive_architecture": "docs/interactive-architecture.html",
+    "master_architecture": "docs/MASTER_ARCHITECTURE.md",
+    "development_handoff": "docs/HANDOFF.md",
+    "project_status": "PROJECT_STATUS.yaml",
+    "application_wheel": "releases/fal_live_commerce_starter-0.1.0-py3-none-any.whl"
+  },
+  "file_count": 112,
+  "files": [
+    {
+      "path": ".gitignore",
+      "size_bytes": 118,
+      "sha256": "dfa5993fce33fc291c0d156cd148b7d1161ba6a22501cf5107718bc7002f3461"
+    },
+    {
+      "path": "AGENTS.md",
+      "size_bytes": 4923,
+      "sha256": "72488207f6424ff8f5c5adc1e343c1edfb5957ab8553b3a89a0ef6d0e8e46464"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "size_bytes": 1219,
+      "sha256": "7e8665168af6108531ef60f96dcf580b86531f4358211959ddbcdc4abbe0ba94"
+    },
+    {
+      "path": "Makefile",
+      "size_bytes": 402,
+      "sha256": "6d7137321effd8d8015d905cb86203e0e21fc3d1231a696d4630107bd2ff479f"
+    },
+    {
+      "path": "PROJECT.md",
+      "size_bytes": 6489,
+      "sha256": "10be7772301f4c2dc16fd6956a25d8ec6421481a3d3cfb66642c148123978179"
+    },
+    {
+      "path": "PROJECT_CONTEXT.md",
+      "size_bytes": 7536,
+      "sha256": "2717910a329c69c02d994ee03888315ef6e1028835847a7d7392c249def4c2fe"
+    },
+    {
+      "path": "PROJECT_STATUS.yaml",
+      "size_bytes": 2935,
+      "sha256": "c036d54581cd95e2e3fd5e91bc4afa0d8b35a2555a010f4ceabe24e99be61946"
+    },
+    {
+      "path": "README.md",
+      "size_bytes": 6323,
+      "sha256": "1183333b5a7c2871c3c27b47a13024eef593039563f51ec6811741315cccd75e"
+    },
+    {
+      "path": "apps/live-commerce/.env.example",
+      "size_bytes": 554,
+      "sha256": "29a8a09869e9305b2784a47b6b60265e7f7138e6e04c9b3deeae831f989e8520"
+    },
+    {
+      "path": "apps/live-commerce/.github/workflows/ci.yml",
+      "size_bytes": 557,
+      "sha256": "7b279a8378bd6e4a9e7439e832b0122f9aea0574041095762f90985eaa104fed"
+    },
+    {
+      "path": "apps/live-commerce/.gitignore",
+      "size_bytes": 107,
+      "sha256": "0e22bb8b0a4e8e8284cb59eda0fb62e1729cc0cb251c3b984ebf08c95d2651d1"
+    },
+    {
+      "path": "apps/live-commerce/Dockerfile",
+      "size_bytes": 486,
+      "sha256": "13a41108e7fb17df033284139449fdeee9e2d10a27bffc18436c39fd4567fc0c"
+    },
+    {
+      "path": "apps/live-commerce/Makefile",
+      "size_bytes": 275,
+      "sha256": "38290bd9980e2cfae44a32648567c3d3f884bd9365b62a949e8a0b9c86a2f389"
+    },
+    {
+      "path": "apps/live-commerce/README.md",
+      "size_bytes": 5962,
+      "sha256": "30dd09010bc799d89ee576de8face1b4dc3d1e6310a14deaa93ed828f7695b62"
+    },
+    {
+      "path": "apps/live-commerce/compose.yaml",
+      "size_bytes": 154,
+      "sha256": "055c8e12f89e55ffd939dc2c00e6df14c8c893da7e4e22750997bb552a58f2a7"
+    },
+    {
+      "path": "apps/live-commerce/docs/ARCHITECTURE.md",
+      "size_bytes": 3887,
+      "sha256": "316ded8e535a6659ca0a0ee9acedcc772171f887d6714218d202d29e77833a1e"
+    },
+    {
+      "path": "apps/live-commerce/docs/EVENT_CONTRACTS.md",
+      "size_bytes": 2936,
+      "sha256": "980f2736fa13cb3b104937ba2f54d4b28f9fcb78715d86b574f19a1e40c5c254"
+    },
+    {
+      "path": "apps/live-commerce/docs/IMPLEMENTATION_STATUS.md",
+      "size_bytes": 1623,
+      "sha256": "54667f35f36ddb7af1593c56f04427f08e4255f56856fa9dc1ef3f8de62b07b0"
+    },
+    {
+      "path": "apps/live-commerce/docs/ROADMAP.md",
+      "size_bytes": 3534,
+      "sha256": "d2a461138073a7070d5781ea7f57c103ee6007b1db94b288a673c8e6cd2371f4"
+    },
+    {
+      "path": "apps/live-commerce/docs/SECURITY.md",
+      "size_bytes": 1259,
+      "sha256": "feecc2a1e9c1521d2853f1652208b858d6ed47ef8e778ca4daae0b563c51458d"
+    },
+    {
+      "path": "apps/live-commerce/docs/interactive-architecture.html",
+      "size_bytes": 119266,
+      "sha256": "b7d3930652ab089ce2ec6e030b0776bcf715fa49cdfd44f0ffedd6a8dd8aa42a"
+    },
+    {
+      "path": "apps/live-commerce/docs/openapi.json",
+      "size_bytes": 31145,
+      "sha256": "d525399bb51e0622a44b6360286471c96b1aa58fe20c7e6519d12e405fa92708"
+    },
+    {
+      "path": "apps/live-commerce/pyproject.toml",
+      "size_bytes": 1054,
+      "sha256": "f5561087d01edfc816f95b4554e0862a50e7ab491bc8250ea911d7686ac178c9"
+    },
+    {
+      "path": "apps/live-commerce/src/livecommerce/__init__.py",
+      "size_bytes": 62,
+      "sha256": "3d14482b92e4876b7c17c165c77e6ff0c112972538b802d68b73653c80821cf8"
+    },
+    {
+      "path": "apps/live-commerce/src/livecommerce/cli.py",
+      "size_bytes": 155,
+      "sha256": "69e9af992b524839871147a0a717abfc2e880b97dc368408a4fa811a37b4cf50"
+    },
+    {
+      "path": "apps/live-commerce/src/livecommerce/config.py",
+      "size_bytes": 2430,
+      "sha256": "4d2a5df8cd5a9a5cbbcee599489a6fbf312d52708a1cca0aafd89b3bc21589c2"
+    },
+    {
+      "path": "apps/live-commerce/src/livecommerce/events.py",
+      "size_bytes": 5900,
+      "sha256": "e332f348235848252ddf8ed5b010ae9acc9634429faaba8635bb2c1a1edf4150"
+    },
+    {
+      "path": "apps/live-commerce/src/livecommerce/fal_gateway.py",
+      "size_bytes": 3278,
+      "sha256": "0d5a947c755ba4195d96d32e1c533ace4b8181b3c4879cd8fa021b38fef11ae2"
+    },
+    {
+      "path": "apps/live-commerce/src/livecommerce/main.py",
+      "size_bytes": 19066,
+      "sha256": "53ed55b90d06fb589398a9b69cb3c52f55b485721b969a63129605a56788039a"
+    },
+    {
+      "path": "apps/live-commerce/src/livecommerce/model_adapters.py",
+      "size_bytes": 1735,
+      "sha256": "88673d5aa9ed1b838d50458b1fecf0693c6f5377c08460c7a8f7abf8739c8539"
+    },
+    {
+      "path": "apps/live-commerce/src/livecommerce/models.py",
+      "size_bytes": 3684,
+      "sha256": "a9bfaacfc3e613413cdfa7058bd76bbeba22f5bce79e3b8da09cce00c86b5e10"
+    },
+    {
+      "path": "apps/live-commerce/src/livecommerce/seed.py",
+      "size_bytes": 1080,
+      "sha256": "25f242cc9d1a5ecaefabcea3c92f6617e9b84bcfaab85ef30264eaf2727f6129"
+    },
+    {
+      "path": "apps/live-commerce/src/livecommerce/services.py",
+      "size_bytes": 11344,
+      "sha256": "e665a46453589aebc88a80c778a1ce78079bae7b732d314308251900f5724780"
+    },
+    {
+      "path": "apps/live-commerce/src/livecommerce/static/architecture.html",
+      "size_bytes": 119266,
+      "sha256": "b7d3930652ab089ce2ec6e030b0776bcf715fa49cdfd44f0ffedd6a8dd8aa42a"
+    },
+    {
+      "path": "apps/live-commerce/src/livecommerce/static/common.js",
+      "size_bytes": 2098,
+      "sha256": "22b714ee27758b4e6861a9868eb2d82500d8c2a0b84931a577662f9496ec8bb2"
+    },
+    {
+      "path": "apps/live-commerce/src/livecommerce/static/demo-program.mp4",
+      "size_bytes": 3659360,
+      "sha256": "d0fbb7122d04f4acd09bac64a58f7dc4f798d8c6724b23c2f122d8c9e146d182"
+    },
+    {
+      "path": "apps/live-commerce/src/livecommerce/static/demo-segment.mp4",
+      "size_bytes": 73234,
+      "sha256": "1e0867f71585e309b030beb9ba6afde0403ae0d555b8a0f6a49819aaa3b69760"
+    },
+    {
+      "path": "apps/live-commerce/src/livecommerce/static/index.html",
+      "size_bytes": 1991,
+      "sha256": "0ddc7037b797caadfbf882d0a0e56d29490751adb1d5896b54005905ae0b22fd"
+    },
+    {
+      "path": "apps/live-commerce/src/livecommerce/static/product-lamp.svg",
+      "size_bytes": 612,
+      "sha256": "0afc3f429c11a1694280d9fde96eb27c3a032c4c2a5b5be085d550db9104b04f"
+    },
+    {
+      "path": "apps/live-commerce/src/livecommerce/static/product-mug.svg",
+      "size_bytes": 424,
+      "sha256": "fb096a6999d664a49e2783ec34322cb82e8c26ac96d1ac35e0e7a072cacaad0d"
+    },
+    {
+      "path": "apps/live-commerce/src/livecommerce/static/product-speaker.svg",
+      "size_bytes": 571,
+      "sha256": "9b2ba3cddc8734b88eaa9c1a550d7bc5fc8c54721b03438b5b3e7884dd433bf1"
+    },
+    {
+      "path": "apps/live-commerce/src/livecommerce/static/studio.html",
+      "size_bytes": 4010,
+      "sha256": "ccad4544a6d07fcd2c7fa0989ca055c77319e79c992a1289ad9974c81649c338"
+    },
+    {
+      "path": "apps/live-commerce/src/livecommerce/static/studio.js",
+      "size_bytes": 13528,
+      "sha256": "b48a8611ea473aaa4e0a021bafbf3244571f160862b0d0e46f4d558fe8b09d52"
+    },
+    {
+      "path": "apps/live-commerce/src/livecommerce/static/styles.css",
+      "size_bytes": 7430,
+      "sha256": "72bcddd6357ca009b62ee505b62b1be47c972563da97fcd620c09f94999deea7"
+    },
+    {
+      "path": "apps/live-commerce/src/livecommerce/static/viewer.html",
+      "size_bytes": 3864,
+      "sha256": "9fbef7edb6c852c17bf390799aae7d55404ccfce1bbff09e2b513f758495c62e"
+    },
+    {
+      "path": "apps/live-commerce/src/livecommerce/static/viewer.js",
+      "size_bytes": 13149,
+      "sha256": "be92eecffdee04ef6778ef97e39d6568c9f5fc68768609c72bdd695f8ad3aa9c"
+    },
+    {
+      "path": "apps/live-commerce/src/livecommerce/store.py",
+      "size_bytes": 30514,
+      "sha256": "d5596b29d5ce025764aa050e05c9849b13347153ffb0e6712ffe5fe513cad332"
+    },
+    {
+      "path": "apps/live-commerce/src/livecommerce/webhook_verifier.py",
+      "size_bytes": 3882,
+      "sha256": "7ea9be65b7b87a4e98530b08eda76d52139b77a69c2ff81893fd7b6e1dcd8925"
+    },
+    {
+      "path": "apps/live-commerce/tests/conftest.py",
+      "size_bytes": 1987,
+      "sha256": "be002de227a0c1f60e6b980e9fdea378edc9cdbd4151b9df7c5c53ed765dedf8"
+    },
+    {
+      "path": "apps/live-commerce/tests/test_architecture_page.py",
+      "size_bytes": 528,
+      "sha256": "f31a9131fc480fa6c39aa561c35b5dde595570c868c4d033465b6a36e7278217"
+    },
+    {
+      "path": "apps/live-commerce/tests/test_fal_gateway.py",
+      "size_bytes": 2127,
+      "sha256": "aff27fc8b3cba404975312cc969580020d2ff72cdbade0735337ba61aee897cd"
+    },
+    {
+      "path": "apps/live-commerce/tests/test_live_flow.py",
+      "size_bytes": 8363,
+      "sha256": "6eb25e72251f3cf4fc0e65992bc54a7bcddeb99b0aa8d59c8ea92c8cec2e2ea6"
+    },
+    {
+      "path": "apps/live-commerce/tests/test_model_adapters.py",
+      "size_bytes": 1630,
+      "sha256": "309c7aa4fc82bb3c6aa00796f667005624f48a8116011fbb5db7a7818a175bcb"
+    },
+    {
+      "path": "apps/live-commerce/tests/test_room_hub.py",
+      "size_bytes": 2321,
+      "sha256": "b3a394508178ecff20df69eb80a2a77645ad6dc0875f0b140093164d6bfec7c7"
+    },
+    {
+      "path": "apps/live-commerce/tests/test_webhook_flow.py",
+      "size_bytes": 2076,
+      "sha256": "be31cf5152d75b238f07073020058482873c417a3403a94809d2af904848b81e"
+    },
+    {
+      "path": "apps/live-commerce/tests/test_webhook_verifier.py",
+      "size_bytes": 2424,
+      "sha256": "8b41c03d64534b7b86ee8f3d290238468280a4c4a28a8f84829c462c07d617a4"
+    },
+    {
+      "path": "docs/ARCHITECTURE.md",
+      "size_bytes": 3887,
+      "sha256": "316ded8e535a6659ca0a0ee9acedcc772171f887d6714218d202d29e77833a1e"
+    },
+    {
+      "path": "docs/DECISIONS.md",
+      "size_bytes": 857,
+      "sha256": "d0008f768b74b140463ff106ad2f6cbdbf250951bd55ff15e498141868efb0a9"
+    },
+    {
+      "path": "docs/DEVELOPMENT_HANDOFF.md",
+      "size_bytes": 2230,
+      "sha256": "b3e72e0a04aaa6084233a0ca56ddf58f3bb398a6d8edc255bf9679f67af35d62"
+    },
+    {
+      "path": "docs/EVENT_CONTRACTS.md",
+      "size_bytes": 2936,
+      "sha256": "980f2736fa13cb3b104937ba2f54d4b28f9fcb78715d86b574f19a1e40c5c254"
+    },
+    {
+      "path": "docs/HANDOFF.md",
+      "size_bytes": 2230,
+      "sha256": "b3e72e0a04aaa6084233a0ca56ddf58f3bb398a6d8edc255bf9679f67af35d62"
+    },
+    {
+      "path": "docs/IMPLEMENTATION_STATUS.md",
+      "size_bytes": 1623,
+      "sha256": "54667f35f36ddb7af1593c56f04427f08e4255f56856fa9dc1ef3f8de62b07b0"
+    },
+    {
+      "path": "docs/INDEX.md",
+      "size_bytes": 1525,
+      "sha256": "e4f4c4978a6dc051ba4a8c761b8efed8a3c4b2f9688df2ca0f267890898a78ba"
+    },
+    {
+      "path": "docs/INTERACTIVE_ARCHITECTURE.md",
+      "size_bytes": 670,
+      "sha256": "7b99701eb23fc123d9ace0cfdf7da5c44ea495a2e8301717b733b006ac52f83e"
+    },
+    {
+      "path": "docs/MASTER_ARCHITECTURE.md",
+      "size_bytes": 19320,
+      "sha256": "d6064e7dcca8860c50ccd2b4fc073d8b687b5b213c7e0c1cf2e73bb44da84993"
+    },
+    {
+      "path": "docs/MASTER_ARCHITECTURE_AND_ROADMAP.md",
+      "size_bytes": 395,
+      "sha256": "87b13cbe3d3a4ec52414fad10e746ffe6cbe687ad2b531812d28a14cd8bff568"
+    },
+    {
+      "path": "docs/NEXT_SPRINT_0.2.md",
+      "size_bytes": 5275,
+      "sha256": "56216ca7c445f9e24fd2b047b877c21f34aae1ed686828db4ed690933fce448d"
+    },
+    {
+      "path": "docs/REQUIREMENTS.md",
+      "size_bytes": 2799,
+      "sha256": "f05ea3d49e58e7d7c188c61f14d22045a03d2962fcad61ce8a685407f686181e"
+    },
+    {
+      "path": "docs/ROADMAP.md",
+      "size_bytes": 3534,
+      "sha256": "d2a461138073a7070d5781ea7f57c103ee6007b1db94b288a673c8e6cd2371f4"
+    },
+    {
+      "path": "docs/SECURITY.md",
+      "size_bytes": 1259,
+      "sha256": "feecc2a1e9c1521d2853f1652208b858d6ed47ef8e778ca4daae0b563c51458d"
+    },
+    {
+      "path": "docs/STARTER_README.md",
+      "size_bytes": 3886,
+      "sha256": "cbb1ec36b3c516fc147dd24d92e32480f5de639a052da37770a17603b4554f44"
+    },
+    {
+      "path": "docs/adr/0001-fal-is-ai-plane.md",
+      "size_bytes": 460,
+      "sha256": "6566c67260163360f651fa716fda60f93402c6ac6f757755ea1fcfb0fb2e0f8b"
+    },
+    {
+      "path": "docs/adr/0002-modular-monolith-first.md",
+      "size_bytes": 425,
+      "sha256": "9a8efaffe86d52a3b695f733a2f26b9bdd7ef429504d4e254a40bebdc07f9b3a"
+    },
+    {
+      "path": "docs/adr/0003-program-time-synchronization.md",
+      "size_bytes": 480,
+      "sha256": "5d2ad543c37564a9be880d99f3aff53fda1536a1f9eb514ad61b7a31b2a12501"
+    },
+    {
+      "path": "docs/adr/0004-commerce-is-authoritative.md",
+      "size_bytes": 486,
+      "sha256": "3c662b9a9fc8d933433740cafdff66711801a5acad052c6899806d0552c4208b"
+    },
+    {
+      "path": "docs/adr/0005-deadline-aware-generation.md",
+      "size_bytes": 481,
+      "sha256": "873461b2f71cd8c26ce1fd3ce11e3848c966fbd075296228394ecd46e295e9ac"
+    },
+    {
+      "path": "docs/adr/0006-server-side-credentials-and-model-allowlists.md",
+      "size_bytes": 462,
+      "sha256": "66770e835d0a817403b8e5104c53edea85ffbb6fe35800f1aebd06e6de4c3d70"
+    },
+    {
+      "path": "docs/adr/0007-completion-requires-qa-and-scheduling.md",
+      "size_bytes": 432,
+      "sha256": "f016834aea34f4a83c89a4dc867f113b9c4d1e431ad5d9c4090a547c231d961e"
+    },
+    {
+      "path": "docs/adr/README.md",
+      "size_bytes": 803,
+      "sha256": "8d27ffbdcd622e744070fb93bf81a676f4a259d7b8ead0f53aa6772586079a95"
+    },
+    {
+      "path": "docs/architecture/ARCHITECTURE.md",
+      "size_bytes": 3887,
+      "sha256": "316ded8e535a6659ca0a0ee9acedcc772171f887d6714218d202d29e77833a1e"
+    },
+    {
+      "path": "docs/architecture/EVENT_CONTRACTS.md",
+      "size_bytes": 2936,
+      "sha256": "980f2736fa13cb3b104937ba2f54d4b28f9fcb78715d86b574f19a1e40c5c254"
+    },
+    {
+      "path": "docs/architecture/IMPLEMENTATION_STATUS.md",
+      "size_bytes": 1623,
+      "sha256": "54667f35f36ddb7af1593c56f04427f08e4255f56856fa9dc1ef3f8de62b07b0"
+    },
+    {
+      "path": "docs/architecture/ROADMAP.md",
+      "size_bytes": 3534,
+      "sha256": "d2a461138073a7070d5781ea7f57c103ee6007b1db94b288a673c8e6cd2371f4"
+    },
+    {
+      "path": "docs/architecture/SECURITY.md",
+      "size_bytes": 1259,
+      "sha256": "feecc2a1e9c1521d2853f1652208b858d6ed47ef8e778ca4daae0b563c51458d"
+    },
+    {
+      "path": "docs/architecture/openapi.json",
+      "size_bytes": 31145,
+      "sha256": "d525399bb51e0622a44b6360286471c96b1aa58fe20c7e6519d12e405fa92708"
+    },
+    {
+      "path": "docs/assets/README.md",
+      "size_bytes": 682,
+      "sha256": "9ffa8f896ff7c9c0b1d503e38e3fdd1ec3f57dd3ad21dba3d4e74c70c957a434"
+    },
+    {
+      "path": "docs/assets/interactive-architecture-current-implementation.png",
+      "size_bytes": 698077,
+      "sha256": "c4605a409fc48bda87feb442121e4504bf6b828474099e1e271b328f9c25fa05"
+    },
+    {
+      "path": "docs/assets/interactive-architecture-desktop.png",
+      "size_bytes": 827459,
+      "sha256": "a6947e3ab0b3b4da9bd1f34d9b716dd696d3e0ec82d446b1384057aabb33ac91"
+    },
+    {
+      "path": "docs/assets/interactive-architecture-mobile.png",
+      "size_bytes": 198058,
+      "sha256": "98be61a2dafea530f0ffb92ad59d123cf3ebe9eb1f7d21f33f3f92676287f47f"
+    },
+    {
+      "path": "docs/assets/interactive-architecture-standalone.html",
+      "size_bytes": 119266,
+      "sha256": "b7d3930652ab089ce2ec6e030b0776bcf715fa49cdfd44f0ffedd6a8dd8aa42a"
+    },
+    {
+      "path": "docs/assets/live-house-overall-architecture.png",
+      "size_bytes": 1588439,
+      "sha256": "7c2ecb73ba1b7bd0c7dd01498ba0de6dc6e1cecc615cfb8edb6d3e0d35653950"
+    },
+    {
+      "path": "docs/decisions/README.md",
+      "size_bytes": 2347,
+      "sha256": "553f4df16d1930578dd124a32fc8cef89597eece24e5713147e031704719edab"
+    },
+    {
+      "path": "docs/demos/architecture_interactive.js",
+      "size_bytes": 49259,
+      "sha256": "624ec2e73e0902e0cf850e03343d36b62c0f26835cc28fa329e83422f159f9f0"
+    },
+    {
+      "path": "docs/demos/interactive-architecture-prototype.html",
+      "size_bytes": 93136,
+      "sha256": "856e06b4cbdb78fc7418f04b23c0bb6229172c298139996a3fc5858f7a5c2bf0"
+    },
+    {
+      "path": "docs/demos/interactive-live-commerce-architecture.html",
+      "size_bytes": 119266,
+      "sha256": "b7d3930652ab089ce2ec6e030b0776bcf715fa49cdfd44f0ffedd6a8dd8aa42a"
+    },
+    {
+      "path": "docs/interactive-architecture.html",
+      "size_bytes": 119266,
+      "sha256": "b7d3930652ab089ce2ec6e030b0776bcf715fa49cdfd44f0ffedd6a8dd8aa42a"
+    },
+    {
+      "path": "docs/openapi.json",
+      "size_bytes": 31145,
+      "sha256": "d525399bb51e0622a44b6360286471c96b1aa58fe20c7e6519d12e405fa92708"
+    },
+    {
+      "path": "project.yaml",
+      "size_bytes": 3346,
+      "sha256": "35fb3c253578af4e886eb490e7224027ff9e16d9eb26ee4b672b4b178f06932f"
+    },
+    {
+      "path": "releases/README.md",
+      "size_bytes": 314,
+      "sha256": "52ce11c86edd123a96c9f85d3e13d56bd2805a1a9e11d34d33a995da8a067bfc"
+    },
+    {
+      "path": "releases/fal_live_commerce_starter-0.1.0-py3-none-any.whl",
+      "size_bytes": 3782538,
+      "sha256": "8174ab624a8bd007def54a7bd5b5985937979511c20a744371f505e6b99a7256"
+    },
+    {
+      "path": "releases/previous/CHECKSUMS-fal-live-commerce.txt",
+      "size_bytes": 420,
+      "sha256": "6e64cbc63ce9f6f1e5f585cdf035500f8a44dbe14598fc9d6c8750ae9f0445b6"
+    },
+    {
+      "path": "releases/previous/fal-live-commerce-starter.tar.gz",
+      "size_bytes": 3820682,
+      "sha256": "0f4e1771ecbb4a4a081bd6b831f9fbdf42e6a1da5d71b18ec1a388fa3893436a"
+    },
+    {
+      "path": "releases/previous/fal-live-commerce-starter.zip",
+      "size_bytes": 3833578,
+      "sha256": "03ebdcead7a75480315d7ddea9640fa3d3472241605d686908edf8f113908abb"
+    },
+    {
+      "path": "scripts/bootstrap.sh",
+      "size_bytes": 319,
+      "sha256": "d447978d059d9898424fa905338e648532c5c625e43fe8a33c9a663e7552e6f4"
+    },
+    {
+      "path": "scripts/package.sh",
+      "size_bytes": 786,
+      "sha256": "1f9ec75ab0db0bcc3dc8cee718e701ea46234fe655650708a1c241bbc3859d5a"
+    },
+    {
+      "path": "scripts/run.sh",
+      "size_bytes": 274,
+      "sha256": "63cbd331926d5502cb37814e083f873fb59aff9e2ce67fca0899e631c8ed3f1f"
+    },
+    {
+      "path": "scripts/sync-docs.sh",
+      "size_bytes": 700,
+      "sha256": "fe46b68c44c912e543a8b6dd99e2c9d8447fa906517d9ea5a861e49c31c5dfdf"
+    },
+    {
+      "path": "scripts/test.sh",
+      "size_bytes": 199,
+      "sha256": "22988da6902d04762d51145cbc9345ce89015c62c7b5885332efb576df1fb10c"
+    },
+    {
+      "path": "scripts/update_manifest.py",
+      "size_bytes": 3108,
+      "sha256": "dfc0b96edc32a32b9016a315b50f28a7c4c3b1f31cb98b80ab803c1bea7327a5"
+    },
+    {
+      "path": "scripts/verify-package.sh",
+      "size_bytes": 139,
+      "sha256": "4473f13eb2e3fcb30414deec8f833f24483d76e74cdecf06a5f08f9823303e31"
+    },
+    {
+      "path": "scripts/verify.sh",
+      "size_bytes": 2131,
+      "sha256": "ee2127d178c6ba49882b0607d9f032e89f718a4aa98764f9cac0810b323c166f"
+    },
+    {
+      "path": "scripts/wheel.sh",
+      "size_bytes": 592,
+      "sha256": "5736bdd5fb001edea1eb11c6e0585667ee20b1a4d59309dd0e4a61cb43046c70"
+    }
+  ]
+}

@@ -1,0 +1,102 @@
+project:
+  name: live-house
+  display_name: Live House
+  version: 0.1.0
+  status: runnable_vertical_slice
+  phase: increment_0_1_complete
+  mission: >-
+    Build an AI-native realtime live-commerce platform with human and virtual hosts,
+    audience interaction, synchronized product commerce, and fal-powered generated media.
+  primary_language: Python
+  timezone_context: Asia/Tokyo
+
+runtime:
+  python: ">=3.11,<3.14"
+  api: FastAPI
+  persistence_current: SQLite
+  realtime_current: in_process_websocket_hub
+  generation_current: fal_queue_or_local_mock
+  frontend_current: vanilla_html_css_javascript
+
+entrypoints:
+  cli:
+    - live-commerce
+  application_path: apps/live-commerce
+  application: livecommerce.main:app
+  routes:
+    home: /
+    studio: /studio
+    viewer: /viewer
+    architecture: /architecture
+    openapi: /docs
+    health: /health
+    fal_webhook: /v1/webhooks/fal
+
+canonical_documents:
+  - PROJECT.md
+  - AGENTS.md
+  - docs/MASTER_ARCHITECTURE.md
+  - docs/architecture/ARCHITECTURE.md
+  - docs/architecture/EVENT_CONTRACTS.md
+  - docs/architecture/SECURITY.md
+  - docs/architecture/ROADMAP.md
+  - docs/DEVELOPMENT_HANDOFF.md
+
+core_invariants:
+  - fal_is_inference_not_mass_broadcast
+  - commerce_systems_are_source_of_truth
+  - ai_failure_does_not_break_playback_or_checkout
+  - events_are_server_sequenced_per_session
+  - viewer_commerce_events_are_media_timeline_synchronized
+  - every_generated_segment_has_deadline_stale_time_and_fallback
+  - provider_completion_requires_qa_and_explicit_scheduling
+  - webhooks_are_signature_verified_and_idempotent
+  - credentials_never_ship_to_clients
+
+completed_capabilities:
+  - live_session_state_machine
+  - websocket_snapshot_replay_and_fanout
+  - chat_reactions_polls_and_deterministic_voting
+  - product_catalog_pinning_cart_inventory_and_mock_checkout
+  - generated_segment_lifecycle
+  - fal_queue_gateway
+  - h3_max_typed_adapter
+  - ed25519_fal_webhook_verification
+  - host_and_viewer_apps
+  - interactive_architecture_explorer
+  - docker_compose_ci_openapi_and_tests
+
+next_increment:
+  id: "0.2"
+  name: real_fal_staging_integration
+  objectives:
+    - run_h3_max_against_staging
+    - add_reference_to_video_adapter
+    - add_private_reference_asset_handling
+    - add_status_reconciliation_and_cancellation
+    - persist_cost_and_provider_metadata
+    - verify_public_https_signed_webhook
+    - copy_approved_outputs_to_project_storage
+  definition_of_done:
+    - real_segment_reaches_ready
+    - duplicate_webhooks_are_harmless
+    - malformed_or_stale_outputs_are_rejected
+    - late_completion_never_revives_segment
+    - provider_credentials_absent_from_clients_and_repository
+    - automated_verification_passes
+
+production_targets:
+  persistence: PostgreSQL_with_transactional_outbox
+  distributed_realtime: regional_gateways_plus_Redis_or_NATS
+  durable_workflows: Temporal_or_equivalent
+  media: WebRTC_or_SRT_ingest_plus_compositor_origin_and_low_latency_CDN
+  identity: OIDC_JWT_RBAC
+  observability: OpenTelemetry_metrics_logs_traces
+  commerce: pricing_reservations_payment_tax_shipping_orders_refunds
+
+references:
+  - https://fal.live/
+  - https://fal.ai/docs/documentation
+  - https://fal.ai/docs/documentation/development/realtime
+  - https://fal.ai/docs/documentation/development/wma
+  - https://fal.ai/docs/documentation/model-apis/inference/webhooks

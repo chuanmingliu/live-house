@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Live House · AI Live Commerce</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark">LH</span> Live House</div>
+      <span class="badge">vertical slice · v0.1</span>
+    </header>
+
+    <section class="hero">
+      <span class="badge ready">RUNNABLE FOUNDATION</span>
+      <h1>Live commerce with an AI production loop.</h1>
+      <p>
+        This implementation starts with the parts that must stay correct under failure:
+        live-session state, sequenced realtime events, product truth, atomic checkout,
+        generated-segment deadlines, fal webhooks, and graceful fallback.
+      </p>
+      <div class="hero-actions">
+        <a href="/studio"><button>Open host studio</button></a>
+        <a href="/viewer"><button class="secondary">Open viewer app</button></a>
+        <a href="/architecture"><button class="secondary">Explore architecture</button></a>
+        <a href="/docs"><button class="secondary">Open API docs</button></a>
+      </div>
+    </section>
+
+    <section class="cards">
+      <article class="card">
+        <h2>Host control</h2>
+        <p>Create and start a session, pin products, launch audience polls, request an AI segment, preview it, and put it on air.</p>
+      </article>
+      <article class="card">
+        <h2>Viewer commerce</h2>
+        <p>Join the room, receive product events on the program timeline, chat, vote, add products to a cart, and complete an idempotent mock checkout.</p>
+      </article>
+      <article class="card">
+        <h2>fal production seam</h2>
+        <p>Mock generation works locally. Queue mode submits through the official fal client and accepts signature-verified completion webhooks.</p>
+      </article>
+    </section>
+  </main>
+</body>
+</html>

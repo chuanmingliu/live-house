@@ -1,0 +1,1981 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Interactive architecture demonstration for an AI-native live-commerce platform powered by fal." />
+  <title>Interactive AI Live-Commerce Architecture</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #07101f;
+      --bg-2: #0b1629;
+      --panel: rgba(13, 28, 50, 0.88);
+      --panel-strong: #10233d;
+      --panel-soft: rgba(255,255,255,0.035);
+      --text: #edf5ff;
+      --muted: #94a9c2;
+      --faint: #627a98;
+      --border: rgba(139, 176, 220, 0.20);
+      --border-strong: rgba(139, 176, 220, 0.40);
+      --shadow: 0 18px 52px rgba(0,0,0,0.28);
+      --clients: #8b5cf6;
+      --edge: #38bdf8;
+      --core: #3b82f6;
+      --ai: #f97316;
+      --media: #d946ef;
+      --data: #22c55e;
+      --external: #a78bfa;
+      --ops: #14b8a6;
+      --playback: #d946ef;
+      --interaction: #38bdf8;
+      --ai-flow: #f97316;
+      --commerce: #22c55e;
+      --operations: #a78bfa;
+      --danger: #fb7185;
+      --success: #34d399;
+      --warning: #fbbf24;
+      --radius: 18px;
+      --node-radius: 13px;
+    }
+
+    html[data-theme="light"] {
+      color-scheme: light;
+      --bg: #edf4fb;
+      --bg-2: #f8fbff;
+      --panel: rgba(255,255,255,0.92);
+      --panel-strong: #ffffff;
+      --panel-soft: rgba(15,23,42,0.035);
+      --text: #10223d;
+      --muted: #526981;
+      --faint: #7d8fa3;
+      --border: rgba(49, 81, 118, 0.17);
+      --border-strong: rgba(49, 81, 118, 0.34);
+      --shadow: 0 18px 52px rgba(54, 78, 108, 0.16);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      min-width: 320px;
+      background:
+        radial-gradient(circle at 12% -5%, rgba(56,189,248,0.16), transparent 32%),
+        radial-gradient(circle at 88% 0%, rgba(139,92,246,0.15), transparent 34%),
+        linear-gradient(180deg, var(--bg-2), var(--bg));
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      overflow: hidden;
+    }
+
+    button, input, select { font: inherit; }
+    button { color: inherit; }
+
+    .app-shell {
+      width: 100vw;
+      max-width: 100vw;
+      height: 100%;
+      min-width: 0;
+      overflow: hidden;
+      display: grid;
+      grid-template-rows: auto auto minmax(0, 1fr);
+    }
+
+    .masthead {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 18px 22px 15px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(6, 15, 29, 0.52);
+      backdrop-filter: blur(18px);
+      z-index: 20;
+    }
+    html[data-theme="light"] .masthead { background: rgba(248,251,255,0.72); }
+
+    .brand-block { display: flex; gap: 13px; align-items: center; min-width: 0; }
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 13px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, #ff7a18, #af2cff);
+      box-shadow: 0 10px 28px rgba(217,70,239,0.22);
+      color: white;
+      font-weight: 900;
+      letter-spacing: -0.06em;
+      flex: 0 0 auto;
+    }
+    .brand-copy { min-width: 0; }
+    .brand-copy h1 {
+      margin: 0;
+      font-size: clamp(17px, 2vw, 23px);
+      line-height: 1.08;
+      letter-spacing: -0.025em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .brand-copy p { margin: 5px 0 0; color: var(--muted); font-size: 12.5px; }
+
+    .header-actions { display: flex; align-items: center; gap: 8px; flex: 0 0 auto; }
+    .icon-button, .text-button, .segmented button, .flow-button, .layer-button {
+      border: 1px solid var(--border);
+      background: var(--panel-soft);
+      border-radius: 11px;
+      cursor: pointer;
+      transition: 160ms ease;
+    }
+    .icon-button:hover, .text-button:hover, .segmented button:hover, .flow-button:hover, .layer-button:hover {
+      transform: translateY(-1px);
+      border-color: var(--border-strong);
+      background: rgba(255,255,255,0.07);
+    }
+    .icon-button { width: 38px; height: 38px; display: grid; place-items: center; }
+    .text-button { padding: 9px 12px; display: inline-flex; align-items: center; gap: 7px; }
+
+    .control-deck {
+      min-width: 0;
+      display: grid;
+      grid-template-columns: auto minmax(220px, 1fr) auto;
+      align-items: center;
+      gap: 14px;
+      padding: 10px 18px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(7,16,31,0.77);
+      backdrop-filter: blur(14px);
+      z-index: 19;
+    }
+    html[data-theme="light"] .control-deck { background: rgba(248,251,255,0.82); }
+
+    .segmented {
+      display: inline-flex;
+      padding: 3px;
+      gap: 3px;
+      border: 1px solid var(--border);
+      background: var(--panel-soft);
+      border-radius: 13px;
+    }
+    .segmented button { border: 0; padding: 8px 11px; color: var(--muted); white-space: nowrap; }
+    .segmented button.active {
+      color: white;
+      background: linear-gradient(135deg, rgba(59,130,246,0.92), rgba(139,92,246,0.92));
+      box-shadow: 0 7px 20px rgba(59,130,246,0.18);
+    }
+
+    .search-wrap { position: relative; max-width: 560px; width: 100%; justify-self: center; }
+    .search-wrap svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--faint); pointer-events: none; }
+    .search-wrap input {
+      width: 100%;
+      padding: 10px 40px 10px 38px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--panel-soft);
+      color: var(--text);
+      outline: none;
+      transition: 160ms ease;
+    }
+    .search-wrap input:focus { border-color: #60a5fa; box-shadow: 0 0 0 3px rgba(59,130,246,0.12); }
+    .search-clear { position: absolute; right: 7px; top: 50%; transform: translateY(-50%); width: 28px; height: 28px; border: 0; background: transparent; color: var(--muted); cursor: pointer; display: none; }
+    .search-clear.visible { display: grid; place-items: center; }
+
+    .stats-strip { display: flex; gap: 8px; justify-content: flex-end; min-width: 0; }
+    .stat-pill {
+      display: flex;
+      align-items: baseline;
+      gap: 5px;
+      padding: 7px 9px;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      background: var(--panel-soft);
+      white-space: nowrap;
+    }
+    .stat-pill b { font-size: 13px; }
+    .stat-pill span { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+
+    .main-layout {
+      min-height: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 345px;
+      gap: 0;
+    }
+
+    .diagram-panel { min-width: 0; min-height: 0; position: relative; display: grid; grid-template-rows: auto minmax(0, 1fr); }
+
+    .flow-toolbar {
+      min-height: 51px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 14px;
+      border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+      scrollbar-width: thin;
+      background: rgba(255,255,255,0.015);
+    }
+    .flow-toolbar-label { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; margin-right: 2px; white-space: nowrap; }
+    .flow-button {
+      --flow-color: var(--muted);
+      padding: 7px 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      white-space: nowrap;
+      color: var(--muted);
+    }
+    .flow-button .flow-dot { width: 8px; height: 8px; border-radius: 999px; background: var(--flow-color); box-shadow: 0 0 12px color-mix(in srgb, var(--flow-color), transparent 45%); }
+    .flow-button.active { color: var(--text); border-color: color-mix(in srgb, var(--flow-color), transparent 42%); background: color-mix(in srgb, var(--flow-color), transparent 89%); }
+    .toolbar-spacer { flex: 1; min-width: 8px; }
+    .play-button {
+      padding: 8px 12px;
+      border: 1px solid rgba(52,211,153,0.35);
+      background: rgba(52,211,153,0.10);
+      color: #a7f3d0;
+      border-radius: 11px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      white-space: nowrap;
+      transition: 160ms ease;
+    }
+    .play-button:hover { transform: translateY(-1px); background: rgba(52,211,153,0.16); }
+    .play-button.playing { border-color: rgba(251,113,133,0.42); background: rgba(251,113,133,0.12); color: #fecdd3; }
+
+    .canvas-viewport {
+      position: relative;
+      min-height: 0;
+      overflow: hidden;
+      cursor: grab;
+      background-image:
+        linear-gradient(rgba(148,163,184,0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(148,163,184,0.045) 1px, transparent 1px);
+      background-size: 28px 28px;
+      user-select: none;
+    }
+    .canvas-viewport.dragging { cursor: grabbing; }
+
+    .architecture-canvas {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1620px;
+      height: 1050px;
+      transform-origin: 0 0;
+      will-change: transform;
+    }
+
+    .canvas-title {
+      position: absolute;
+      left: 52px;
+      top: 24px;
+      z-index: 4;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .canvas-title h2 { margin: 0; font-size: 17px; letter-spacing: -0.02em; }
+    .mode-badge {
+      border: 1px solid rgba(96,165,250,0.32);
+      background: rgba(59,130,246,0.10);
+      color: #bfdbfe;
+      border-radius: 999px;
+      padding: 4px 8px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .board-grid {
+      position: absolute;
+      inset: 74px 44px 64px;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: 305px 420px 420px 305px;
+      grid-template-rows: 260px 385px 240px;
+      grid-template-areas:
+        "clients edge media external"
+        "clients core ai external"
+        "clients data data ops";
+      gap: 18px;
+    }
+
+    .layer {
+      position: relative;
+      border: 1px solid color-mix(in srgb, var(--accent), transparent 63%);
+      background: linear-gradient(180deg, color-mix(in srgb, var(--accent), transparent 92%), var(--panel));
+      border-radius: var(--radius);
+      padding: 41px 12px 12px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.03), 0 16px 42px rgba(0,0,0,0.12);
+      overflow: visible;
+      transition: opacity 180ms ease, filter 180ms ease, transform 180ms ease;
+    }
+    .layer::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      background: radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--accent), transparent 87%), transparent 38%);
+    }
+    .layer[data-layer="clients"] { --accent: var(--clients); grid-area: clients; }
+    .layer[data-layer="edge"] { --accent: var(--edge); grid-area: edge; }
+    .layer[data-layer="core"] { --accent: var(--core); grid-area: core; }
+    .layer[data-layer="ai"] { --accent: var(--ai); grid-area: ai; }
+    .layer[data-layer="media"] { --accent: var(--media); grid-area: media; }
+    .layer[data-layer="data"] { --accent: var(--data); grid-area: data; }
+    .layer[data-layer="external"] { --accent: var(--external); grid-area: external; }
+    .layer[data-layer="ops"] { --accent: var(--ops); grid-area: ops; }
+    .layer.layer-muted { opacity: 0.25; filter: saturate(0.4); }
+    .layer.layer-hidden { display: none; }
+
+    .layer-heading {
+      position: absolute;
+      top: 11px;
+      left: 14px;
+      right: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      z-index: 2;
+      pointer-events: none;
+    }
+    .layer-heading strong { color: color-mix(in srgb, var(--accent), white 30%); font-size: 11px; text-transform: uppercase; letter-spacing: 0.105em; }
+    .layer-heading span { color: var(--faint); font-size: 10px; }
+
+    .node-grid {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      gap: 9px;
+      align-content: start;
+    }
+    .layer[data-layer="clients"] .node-grid,
+    .layer[data-layer="external"] .node-grid,
+    .layer[data-layer="ops"] .node-grid { grid-template-columns: 1fr; }
+    .layer[data-layer="edge"] .node-grid,
+    .layer[data-layer="media"] .node-grid,
+    .layer[data-layer="core"] .node-grid,
+    .layer[data-layer="ai"] .node-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .layer[data-layer="data"] .node-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+
+    .arch-node {
+      --accent: #94a3b8;
+      position: relative;
+      min-height: 72px;
+      border: 1px solid color-mix(in srgb, var(--accent), transparent 72%);
+      background: color-mix(in srgb, var(--panel-strong), transparent 2%);
+      border-radius: var(--node-radius);
+      padding: 11px 10px 10px 48px;
+      color: var(--text);
+      text-align: left;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.11), inset 0 1px 0 rgba(255,255,255,0.035);
+      transition: transform 160ms ease, opacity 160ms ease, filter 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+      user-select: none;
+    }
+    .arch-node:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--accent), white 18%); box-shadow: 0 12px 28px rgba(0,0,0,0.18), 0 0 0 2px color-mix(in srgb, var(--accent), transparent 88%); }
+    .arch-node:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent), transparent 55%); outline-offset: 2px; }
+    .arch-node .node-icon {
+      position: absolute;
+      left: 10px;
+      top: 11px;
+      width: 29px;
+      height: 29px;
+      border-radius: 9px;
+      display: grid;
+      place-items: center;
+      background: color-mix(in srgb, var(--accent), transparent 84%);
+      border: 1px solid color-mix(in srgb, var(--accent), transparent 60%);
+      color: color-mix(in srgb, var(--accent), white 28%);
+      font-weight: 900;
+      font-size: 10px;
+      letter-spacing: -0.02em;
+    }
+    .arch-node .node-title { display: block; font-size: 11.5px; line-height: 1.22; font-weight: 750; letter-spacing: -0.01em; }
+    .arch-node .node-short { display: block; margin-top: 5px; font-size: 9.5px; line-height: 1.28; color: var(--muted); }
+    .arch-node .node-status {
+      position: absolute;
+      top: 9px;
+      right: 9px;
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--success);
+      box-shadow: 0 0 10px rgba(52,211,153,0.7);
+    }
+    .arch-node[data-status="target"] .node-status { background: #60a5fa; box-shadow: 0 0 10px rgba(96,165,250,0.6); }
+    .arch-node[data-status="experimental"] .node-status { background: var(--warning); box-shadow: 0 0 10px rgba(251,191,36,0.6); }
+    .arch-node[data-status="external"] .node-status { background: #c084fc; box-shadow: 0 0 10px rgba(192,132,252,0.6); }
+
+    .arch-node.node-muted { opacity: 0.17; filter: saturate(0.35); transform: scale(0.985); }
+    .arch-node.node-active, .arch-node.node-selected, .arch-node.search-hit {
+      opacity: 1;
+      filter: none;
+      transform: translateY(-2px);
+      border-color: color-mix(in srgb, var(--accent), white 28%);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent), transparent 80%), 0 16px 34px rgba(0,0,0,0.20);
+      z-index: 5;
+    }
+    .arch-node.walk-active {
+      animation: nodePulse 900ms ease-in-out infinite alternate;
+      z-index: 8;
+    }
+    @keyframes nodePulse {
+      from { box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent), transparent 78%), 0 10px 30px rgba(0,0,0,0.18); }
+      to { box-shadow: 0 0 0 8px color-mix(in srgb, var(--accent), transparent 90%), 0 0 26px color-mix(in srgb, var(--accent), transparent 35%); }
+    }
+
+    .connector-layer {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 3;
+      overflow: visible;
+      pointer-events: none;
+    }
+    .edge-group { color: var(--faint); opacity: 0.36; transition: opacity 180ms ease; }
+    .edge-group[data-flow~="playback"] { color: var(--playback); }
+    .edge-group[data-flow~="interaction"] { color: var(--interaction); }
+    .edge-group[data-flow~="ai"] { color: var(--ai-flow); }
+    .edge-group[data-flow~="commerce"] { color: var(--commerce); }
+    .edge-group[data-flow~="operations"] { color: var(--operations); }
+    .connector-shadow { fill: none; stroke: rgba(0,0,0,0.38); stroke-width: 5; }
+    .connector { fill: none; stroke: currentColor; stroke-width: 1.7; vector-effect: non-scaling-stroke; }
+    .edge-group[data-kind="async"] .connector { stroke-dasharray: 7 5; }
+    .edge-group[data-kind="data"] .connector { stroke-dasharray: 2 5; }
+    .edge-group.edge-muted { opacity: 0.035; }
+    .edge-group.edge-active { opacity: 0.88; }
+    .edge-group.walk-edge .connector { stroke-width: 3; stroke-dasharray: 10 7; animation: dashFlow 650ms linear infinite; filter: drop-shadow(0 0 6px currentColor); }
+    @keyframes dashFlow { to { stroke-dashoffset: -17; } }
+    .edge-label {
+      fill: var(--muted);
+      font-size: 9px;
+      paint-order: stroke;
+      stroke: var(--bg);
+      stroke-width: 4px;
+      stroke-linejoin: round;
+      opacity: 0;
+      transition: opacity 160ms ease;
+    }
+    .edge-group.edge-active .edge-label { opacity: 0.86; }
+
+    .canvas-controls {
+      position: absolute;
+      left: 14px;
+      bottom: 14px;
+      z-index: 8;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+    }
+    .canvas-controls button { width: 34px; height: 32px; border: 0; background: transparent; color: var(--muted); border-radius: 8px; cursor: pointer; }
+    .canvas-controls button:hover { background: var(--panel-soft); color: var(--text); }
+    .zoom-label { width: 54px; text-align: center; font-size: 10px; color: var(--muted); }
+
+    .layer-controls {
+      position: absolute;
+      right: 14px;
+      bottom: 14px;
+      z-index: 8;
+      display: flex;
+      gap: 5px;
+      padding: 5px;
+      max-width: calc(100% - 230px);
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+    }
+    .layer-button { border: 0; padding: 6px 8px; color: var(--muted); font-size: 9.5px; white-space: nowrap; }
+    .layer-button.active { color: var(--text); background: var(--panel-soft); }
+
+    .flow-status {
+      position: absolute;
+      left: 50%;
+      bottom: 14px;
+      transform: translateX(-50%);
+      z-index: 9;
+      max-width: 530px;
+      min-width: 260px;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+      opacity: 0;
+      pointer-events: none;
+      transition: 180ms ease;
+    }
+    .flow-status.visible { opacity: 1; }
+    .flow-status-dot { width: 8px; height: 8px; border-radius: 999px; background: var(--success); box-shadow: 0 0 12px rgba(52,211,153,0.6); flex: 0 0 auto; }
+    .flow-status-text { color: var(--muted); font-size: 10.5px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+
+    .inspector {
+      min-width: 0;
+      min-height: 0;
+      border-left: 1px solid var(--border);
+      background: rgba(7,16,31,0.66);
+      backdrop-filter: blur(16px);
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr) auto;
+      overflow: hidden;
+      z-index: 15;
+    }
+    html[data-theme="light"] .inspector { background: rgba(248,251,255,0.82); }
+    .inspector-head { padding: 16px 16px 13px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .inspector-head div { min-width: 0; }
+    .inspector-head span { display: block; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; font-size: 9px; }
+    .inspector-head h2 { margin: 4px 0 0; font-size: 16px; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .inspector-close { display: none; }
+
+    .inspector-scroll { min-height: 0; overflow-y: auto; padding: 14px 15px 22px; scrollbar-width: thin; }
+    .overview-card, .detail-card, .walk-card {
+      border: 1px solid var(--border);
+      background: var(--panel-soft);
+      border-radius: 14px;
+      padding: 13px;
+      margin-bottom: 11px;
+    }
+    .overview-card h3, .detail-card h3, .walk-card h3 { margin: 0 0 8px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.085em; color: var(--muted); }
+    .overview-card p, .detail-card p, .walk-card p { margin: 0; color: var(--muted); font-size: 11.5px; line-height: 1.55; }
+    .overview-kpis { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 12px; }
+    .overview-kpi { padding: 10px; border-radius: 11px; background: rgba(255,255,255,0.035); border: 1px solid var(--border); }
+    .overview-kpi b { display: block; font-size: 18px; }
+    .overview-kpi span { display: block; margin-top: 2px; font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; }
+
+    .detail-accent { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .detail-icon { --accent: #60a5fa; width: 42px; height: 42px; border-radius: 13px; display: grid; place-items: center; color: color-mix(in srgb, var(--accent), white 28%); background: color-mix(in srgb, var(--accent), transparent 84%); border: 1px solid color-mix(in srgb, var(--accent), transparent 58%); font-weight: 900; }
+    .detail-accent div { min-width: 0; }
+    .detail-accent b { display: block; font-size: 15px; }
+    .detail-accent span { display: block; margin-top: 3px; color: var(--muted); font-size: 10px; }
+    .status-chip { display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; border: 1px solid var(--border); border-radius: 999px; padding: 4px 7px; color: var(--muted); font-size: 9px; }
+    .status-chip i { width: 6px; height: 6px; border-radius: 999px; background: var(--success); }
+
+    .bullet-list { margin: 0; padding: 0; list-style: none; display: grid; gap: 7px; }
+    .bullet-list li { position: relative; padding-left: 13px; color: var(--muted); font-size: 10.5px; line-height: 1.42; }
+    .bullet-list li::before { content: ""; position: absolute; left: 0; top: 0.55em; width: 5px; height: 5px; border-radius: 999px; background: #60a5fa; }
+    .tag-row { display: flex; flex-wrap: wrap; gap: 6px; }
+    .tag { padding: 5px 7px; border-radius: 8px; border: 1px solid var(--border); background: rgba(255,255,255,0.03); color: var(--muted); font-size: 9px; }
+    .neighbor-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .neighbor-block b { display: block; color: var(--muted); font-size: 9px; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
+    .neighbor-link { width: 100%; border: 1px solid var(--border); background: transparent; color: var(--text); text-align: left; border-radius: 9px; padding: 7px 8px; margin-bottom: 5px; cursor: pointer; font-size: 9.5px; }
+    .neighbor-link:hover { border-color: var(--border-strong); background: var(--panel-soft); }
+
+    .walk-steps { display: grid; gap: 7px; margin-top: 10px; }
+    .walk-step { display: grid; grid-template-columns: 20px 1fr; gap: 8px; align-items: start; padding: 8px; border: 1px solid var(--border); border-radius: 10px; background: rgba(255,255,255,0.025); }
+    .walk-step-index { width: 20px; height: 20px; border-radius: 7px; display: grid; place-items: center; background: rgba(59,130,246,0.14); color: #bfdbfe; font-size: 9px; font-weight: 800; }
+    .walk-step b { display: block; font-size: 10px; }
+    .walk-step span { display: block; margin-top: 2px; color: var(--muted); font-size: 9px; line-height: 1.35; }
+    .walk-step.active { border-color: rgba(52,211,153,0.42); background: rgba(52,211,153,0.08); }
+
+    .event-console { border-top: 1px solid var(--border); padding: 11px 13px 13px; min-height: 132px; background: rgba(0,0,0,0.12); }
+    .event-console-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+    .event-console-head b { font-size: 10px; text-transform: uppercase; letter-spacing: 0.09em; color: var(--muted); }
+    .event-console-head button { border: 0; background: transparent; color: var(--faint); cursor: pointer; font-size: 9px; }
+    .event-log { display: grid; gap: 5px; max-height: 82px; overflow-y: auto; scrollbar-width: thin; }
+    .event-row { display: grid; grid-template-columns: 44px 1fr; gap: 7px; color: var(--muted); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 8.5px; line-height: 1.35; }
+    .event-row time { color: var(--faint); }
+    .event-row code { color: #a5f3fc; white-space: normal; overflow-wrap: anywhere; }
+
+    .mobile-inspector-button { display: none; }
+    .screen-reader-only { position: absolute !important; width: 1px !important; height: 1px !important; padding: 0 !important; margin: -1px !important; overflow: hidden !important; clip: rect(0,0,0,0) !important; white-space: nowrap !important; border: 0 !important; }
+
+    @media (max-width: 1120px) {
+      .main-layout { grid-template-columns: minmax(0, 1fr); }
+      .inspector {
+        position: fixed;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        width: min(390px, 92vw);
+        transform: translateX(102%);
+        transition: transform 220ms ease;
+        box-shadow: -25px 0 60px rgba(0,0,0,0.35);
+      }
+      .inspector.open { transform: translateX(0); }
+      .inspector-close { display: grid; }
+      .mobile-inspector-button { display: inline-flex; }
+      .stats-strip .stat-pill:nth-child(2) { display: none; }
+    }
+
+    @media (max-width: 760px) {
+      .masthead { padding: 12px 13px; }
+      .brand-block { flex: 1 1 auto; overflow: hidden; }
+      .brand-copy { flex: 1 1 auto; overflow: hidden; }
+      .brand-copy h1 { font-size: 15px; }
+      .brand-copy p { display: none; }
+      .brand-mark { width: 36px; height: 36px; }
+      .header-actions { margin-left: auto; }
+      .header-actions .text-button { display: none; }
+      .control-deck { grid-template-columns: minmax(0, 1fr); gap: 8px; padding: 8px 10px; }
+      .search-wrap { grid-row: 2; grid-column: 1; max-width: none; }
+      .stats-strip { display: none; }
+      .segmented { width: 100%; }
+      .segmented button { flex: 1 1 0; min-width: 0; padding: 7px 8px; font-size: 10px; }
+      .flow-toolbar { padding: 7px 8px; }
+      .flow-toolbar-label { display: none; }
+      .flow-button { padding: 7px 8px; font-size: 10px; }
+      .layer-controls { display: none; }
+      .flow-status { bottom: 58px; max-width: calc(100% - 24px); min-width: 0; width: max-content; }
+    }
+
+    @media print {
+      body { overflow: visible; background: white; color: black; }
+      .masthead, .control-deck, .flow-toolbar, .inspector, .canvas-controls, .layer-controls, .flow-status { display: none !important; }
+      .app-shell, .main-layout, .diagram-panel, .canvas-viewport { display: block; height: auto; overflow: visible; }
+      .architecture-canvas { position: relative; transform: scale(0.68) !important; transform-origin: top left; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="masthead">
+      <div class="brand-block">
+        <div class="brand-mark" aria-hidden="true">fal</div>
+        <div class="brand-copy">
+          <h1>AI-Native Live-Commerce Architecture</h1>
+          <p>Interactive system map · realtime streaming · audience interaction · fal generation · commerce</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="text-button" id="printButton" type="button" title="Print or save as PDF">
+          <span aria-hidden="true">↗</span><span>Print map</span>
+        </button>
+        <button class="icon-button mobile-inspector-button" id="openInspectorButton" type="button" title="Open architecture details" aria-label="Open architecture details">☰</button>
+        <button class="icon-button" id="themeButton" type="button" title="Toggle light and dark theme" aria-label="Toggle light and dark theme">◐</button>
+      </div>
+    </header>
+
+    <section class="control-deck" aria-label="Architecture controls">
+      <div class="segmented" role="group" aria-label="Architecture mode">
+        <button type="button" class="active" data-mode-button="production">Production target</button>
+        <button type="button" data-mode-button="current">Implemented v0.1</button>
+      </div>
+
+      <label class="search-wrap">
+        <span class="screen-reader-only">Search architecture components</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="m16.5 16.5 4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <input id="searchInput" type="search" placeholder="Search services, responsibilities, technologies…  (press /)" autocomplete="off" />
+        <button id="searchClear" class="search-clear" type="button" aria-label="Clear search">×</button>
+      </label>
+
+      <div class="stats-strip" aria-live="polite">
+        <div class="stat-pill"><b id="componentCount">0</b><span>components</span></div>
+        <div class="stat-pill"><b id="connectionCount">0</b><span>connections</span></div>
+        <div class="stat-pill"><b>4</b><span>critical flows</span></div>
+      </div>
+    </section>
+
+    <main class="main-layout">
+      <section class="diagram-panel" aria-label="Interactive architecture diagram">
+        <div class="flow-toolbar">
+          <span class="flow-toolbar-label">Trace flow</span>
+          <button class="flow-button active" type="button" data-flow="all" style="--flow-color:#94a3b8"><span class="flow-dot"></span>All connections</button>
+          <button class="flow-button" type="button" data-flow="playback" style="--flow-color:var(--playback)"><span class="flow-dot"></span>Live playback</button>
+          <button class="flow-button" type="button" data-flow="interaction" style="--flow-color:var(--interaction)"><span class="flow-dot"></span>Audience realtime</button>
+          <button class="flow-button" type="button" data-flow="ai" style="--flow-color:var(--ai-flow)"><span class="flow-dot"></span>AI segment</button>
+          <button class="flow-button" type="button" data-flow="commerce" style="--flow-color:var(--commerce)"><span class="flow-dot"></span>Purchase</button>
+          <span class="toolbar-spacer"></span>
+          <button class="play-button" id="playFlowButton" type="button"><span aria-hidden="true">▶</span><span>Play walkthrough</span></button>
+        </div>
+
+        <div class="canvas-viewport" id="canvasViewport" tabindex="0" aria-label="Architecture canvas. Drag to pan and use the zoom controls.">
+          <div class="architecture-canvas" id="architectureCanvas">
+            <div class="canvas-title">
+              <h2 id="canvasModeTitle">Production target architecture</h2>
+              <span class="mode-badge" id="canvasModeBadge">scalable reference</span>
+            </div>
+
+            <svg class="connector-layer" id="connectorLayer" viewBox="0 0 1620 1050" preserveAspectRatio="none" aria-hidden="true">
+              <defs>
+                <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                  <path d="M 0 0 L 10 5 L 0 10 z" fill="context-stroke"></path>
+                </marker>
+              </defs>
+              <g id="edgeContainer"></g>
+            </svg>
+
+            <div class="board-grid" id="boardGrid">
+              <section class="layer" data-layer="clients">
+                <div class="layer-heading"><strong>Experience plane</strong><span data-layer-count>0</span></div>
+                <div class="node-grid" data-node-container="clients"></div>
+              </section>
+              <section class="layer" data-layer="edge">
+                <div class="layer-heading"><strong>Edge & delivery</strong><span data-layer-count>0</span></div>
+                <div class="node-grid" data-node-container="edge"></div>
+              </section>
+              <section class="layer" data-layer="core">
+                <div class="layer-heading"><strong>Core backend</strong><span data-layer-count>0</span></div>
+                <div class="node-grid" data-node-container="core"></div>
+              </section>
+              <section class="layer" data-layer="ai">
+                <div class="layer-heading"><strong>AI control plane · fal</strong><span data-layer-count>0</span></div>
+                <div class="node-grid" data-node-container="ai"></div>
+              </section>
+              <section class="layer" data-layer="media">
+                <div class="layer-heading"><strong>Media production</strong><span data-layer-count>0</span></div>
+                <div class="node-grid" data-node-container="media"></div>
+              </section>
+              <section class="layer" data-layer="data">
+                <div class="layer-heading"><strong>Data & storage</strong><span data-layer-count>0</span></div>
+                <div class="node-grid" data-node-container="data"></div>
+              </section>
+              <section class="layer" data-layer="external">
+                <div class="layer-heading"><strong>External integrations</strong><span data-layer-count>0</span></div>
+                <div class="node-grid" data-node-container="external"></div>
+              </section>
+              <section class="layer" data-layer="ops">
+                <div class="layer-heading"><strong>Operations & cloud</strong><span data-layer-count>0</span></div>
+                <div class="node-grid" data-node-container="ops"></div>
+              </section>
+            </div>
+          </div>
+
+          <div class="canvas-controls" aria-label="Zoom controls">
+            <button type="button" id="zoomOutButton" aria-label="Zoom out">−</button>
+            <span class="zoom-label" id="zoomLabel">100%</span>
+            <button type="button" id="zoomInButton" aria-label="Zoom in">+</button>
+            <button type="button" id="fitButton" aria-label="Fit architecture to viewport" title="Fit to viewport">⌗</button>
+            <button type="button" id="resetViewButton" aria-label="Reset view" title="Reset view">↺</button>
+          </div>
+
+          <div class="layer-controls" id="layerControls" aria-label="Layer filter"></div>
+
+          <div class="flow-status" id="flowStatus" aria-live="polite">
+            <span class="flow-status-dot"></span>
+            <span class="flow-status-text" id="flowStatusText"></span>
+          </div>
+        </div>
+      </section>
+
+      <aside class="inspector" id="inspector" aria-label="Architecture details">
+        <div class="inspector-head">
+          <div>
+            <span id="inspectorEyebrow">Architecture guide</span>
+            <h2 id="inspectorTitle">System overview</h2>
+          </div>
+          <button class="icon-button inspector-close" id="closeInspectorButton" type="button" aria-label="Close details">×</button>
+        </div>
+        <div class="inspector-scroll" id="inspectorContent"></div>
+        <div class="event-console">
+          <div class="event-console-head"><b>Flow event monitor</b><button type="button" id="clearLogButton">clear</button></div>
+          <div class="event-log" id="eventLog" aria-live="polite"></div>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const safeStorage = {
+        get(key) { try { return window.localStorage.getItem(key); } catch (_) { return null; } },
+        set(key, value) { try { window.localStorage.setItem(key, value); } catch (_) { /* standalone preview may have no storage origin */ } }
+      };
+
+      const layerMeta = {
+        clients: { label: "Experience", color: "var(--clients)" },
+        edge: { label: "Edge & delivery", color: "var(--edge)" },
+        core: { label: "Core backend", color: "var(--core)" },
+        ai: { label: "AI control plane", color: "var(--ai)" },
+        media: { label: "Media production", color: "var(--media)" },
+        data: { label: "Data & storage", color: "var(--data)" },
+        external: { label: "External integrations", color: "var(--external)" },
+        ops: { label: "Operations & cloud", color: "var(--ops)" }
+      };
+
+      const modes = {
+        production: {
+          title: "Production target architecture",
+          badge: "scalable reference",
+          summary: "A decoupled production architecture in which fal owns AI inference, the media plane owns continuous broadcast, and the commerce plane remains the source of truth for every price, product, inventory, and order decision.",
+          nodes: [
+            {
+              id: "host-studio", layer: "clients", icon: "HS", title: "Host / Seller Studio", short: "Go live, control scenes, products and AI segments", status: "target",
+              description: "The producer-facing control surface for camera preview, show rundown, product selection, polls, AI requests, previews, approvals, and emergency fallback.",
+              responsibilities: ["Capture host audio/video and publish ingest tracks", "Control live-session state and product pins", "Approve or reject generated segments before broadcast", "Provide immediate cut-to-host and holding-scene controls"],
+              interfaces: ["WebRTC, SRT or RTMP ingest", "REST control APIs", "Realtime WebSocket events"],
+              events: ["live.session.started", "product.pinned", "scene.plan.approved"],
+              tech: ["React", "WebRTC", "WebSocket", "Role-scoped JWT"]
+            },
+            {
+              id: "viewer-apps", layer: "clients", icon: "VA", title: "Viewer Web & Mobile", short: "Watch, chat, vote, shop and recover state", status: "target",
+              description: "The global audience experience: adaptive playback, low-latency interactions, media-timeline product synchronization, cart, checkout, captions, and reconnect recovery.",
+              responsibilities: ["Play the continuous adaptive-bitrate stream", "Send chat, reactions and votes", "Display product cards at the intended program timestamp", "Recover room state and missed events after reconnect"],
+              interfaces: ["HLS/DASH or WebRTC playback", "REST/GraphQL APIs", "Regional WebSocket gateway"],
+              events: ["session.snapshot", "poll.opened", "product.pinned", "segment.on_air"],
+              tech: ["Next.js", "iOS", "Android", "LL-HLS"]
+            },
+            {
+              id: "moderator-console", layer: "clients", icon: "MC", title: "Moderator Console", short: "Review content, prompts, claims and emergencies", status: "target",
+              description: "A trust-and-safety workstation for chat moderation, generated-media preview, policy escalation, operator approval and emergency broadcast controls.",
+              responsibilities: ["Review flagged audience input and generated output", "Validate product claims and brand policy", "Ban abusive users and stop unsafe prompts", "Trigger emergency cut-to-slate or host feed"],
+              interfaces: ["Admin REST APIs", "Realtime moderation stream", "Immutable audit log"],
+              events: ["moderation.flagged", "segment.qa.rejected", "broadcast.emergency_cut"],
+              tech: ["React", "RBAC", "Audit logging"]
+            },
+
+            {
+              id: "api-gateway", layer: "edge", icon: "API", title: "API Gateway / OIDC", short: "Authentication, routing, policy and rate limits", status: "target",
+              description: "The authenticated edge for transactional and control-plane APIs. It validates identities, merchant scope, idempotency keys, request budgets and endpoint permissions.",
+              responsibilities: ["Verify OIDC/JWT identities and roles", "Apply WAF, rate limits and request validation", "Route control and commerce requests", "Attach trace, correlation and idempotency identifiers"],
+              interfaces: ["HTTPS REST/GraphQL", "OIDC discovery and JWKS", "Internal service mesh"],
+              events: ["api.request.accepted", "security.rate_limited"],
+              tech: ["Envoy/API Gateway", "OIDC", "WAF", "OpenTelemetry"]
+            },
+            {
+              id: "realtime-gateway", layer: "edge", icon: "RT", title: "Regional Realtime Gateway", short: "WebSocket fanout, presence and ordered recovery", status: "target",
+              description: "A horizontally scalable regional gateway that maintains viewer and producer WebSockets, performs room fanout, and reconnects clients using snapshots plus sequence-aware replay.",
+              responsibilities: ["Maintain millions of concurrent room connections", "Fan out ordered room events", "Shed noncritical reactions under overload", "Resume clients from last received sequence"],
+              interfaces: ["WSS", "Redis/NATS ephemeral channels", "Durable event backbone"],
+              events: ["presence.connected", "realtime.replay.requested"],
+              tech: ["Go or Elixir", "WebSocket", "Redis", "NATS"]
+            },
+            {
+              id: "media-ingest", layer: "edge", icon: "IN", title: "Media Ingest / SFU", short: "Host and guest contribution over low-latency media", status: "target",
+              description: "The contribution edge that receives host and guest audio/video, handles network adaptation, and forwards clean tracks into the production compositor.",
+              responsibilities: ["Receive WebRTC, SRT or RTMP contribution", "Perform jitter buffering and packet-loss handling", "Authorize hosts and guest tracks", "Feed active and standby compositors"],
+              interfaces: ["WebRTC", "SRT", "RTMP", "RTP tracks"],
+              events: ["ingest.connected", "ingest.degraded", "track.published"],
+              tech: ["SFU", "TURN/STUN", "SRT", "Media metrics"]
+            },
+            {
+              id: "playback-cdn", layer: "edge", icon: "CDN", title: "Playback CDN", short: "Global adaptive-bitrate delivery to viewers", status: "external",
+              description: "The one-to-many distribution layer for the final continuous program. It absorbs audience scale so AI generation and origin capacity scale with channels—not individual viewers.",
+              responsibilities: ["Distribute adaptive-bitrate renditions globally", "Provide low-latency manifests and edge caching", "Protect origins and absorb traffic spikes", "Expose QoE and edge delivery metrics"],
+              interfaces: ["LL-HLS/DASH", "Signed playback URLs", "CDN logs and APIs"],
+              events: ["playback.started", "cdn.origin_error", "qoe.rebuffer"],
+              tech: ["Media CDN", "LL-HLS", "DASH", "Multi-CDN"]
+            },
+
+            {
+              id: "live-session", layer: "core", icon: "LS", title: "Live Session Service", short: "Room lifecycle, roles, state and program clock", status: "target",
+              description: "The authoritative control-plane service for creating, warming, starting, degrading and ending live rooms while maintaining the program-time anchor.",
+              responsibilities: ["Manage the live session state machine", "Issue room snapshots and playback metadata", "Track current program-time anchor", "Coordinate warm-up and graceful shutdown"],
+              interfaces: ["REST APIs", "PostgreSQL", "Event bus"],
+              events: ["live.session.created", "live.session.warming", "live.session.started", "live.session.ended"],
+              tech: ["Go/TypeScript", "PostgreSQL", "Transactional outbox"]
+            },
+            {
+              id: "interaction-service", layer: "core", icon: "CX", title: "Chat / Polls / Presence", short: "Realtime audience state and deterministic voting", status: "target",
+              description: "The interaction service validates chat and votes, aggregates reactions, controls polls, and publishes sanitized audience events without coupling them to media delivery.",
+              responsibilities: ["Moderate and publish chat messages", "Accept one eligible vote per user", "Aggregate reactions and audience intent", "Maintain presence and room counters"],
+              interfaces: ["Realtime gateway", "Redis", "Event bus"],
+              events: ["chat.message.published", "vote.accepted", "poll.closed", "audience.intent.accepted"],
+              tech: ["Redis", "NATS/Kafka", "Abuse controls"]
+            },
+            {
+              id: "commerce-service", layer: "core", icon: "CO", title: "Commerce Services", short: "Catalog, price, inventory, cart, checkout and orders", status: "target",
+              description: "The commercial source of truth. AI may reference approved facts, but this service alone owns names, prices, inventory, offers, checkout validation and order state.",
+              responsibilities: ["Serve approved product facts and reference assets", "Atomically reserve and commit inventory", "Revalidate price and eligibility at checkout", "Create idempotent payment and order workflows"],
+              interfaces: ["REST/GraphQL", "PostgreSQL", "Payment and shipping providers", "Event bus"],
+              events: ["product.pinned", "inventory.changed", "checkout.created", "order.created"],
+              tech: ["PostgreSQL", "Temporal", "Idempotency keys", "PCI boundary"]
+            },
+            {
+              id: "notification-service", layer: "core", icon: "NT", title: "Notification Service", short: "Transactional, creator and operational messages", status: "target",
+              description: "Delivers in-app, push, SMS and email notifications for session reminders, order status, moderation and operational alerts.",
+              responsibilities: ["Render channel-specific templates", "Apply preference and consent rules", "Retry provider failures idempotently", "Track delivery and engagement"],
+              interfaces: ["Event bus", "Email/SMS/Push providers"],
+              events: ["notification.requested", "notification.delivered"],
+              tech: ["APNs/FCM", "Email/SMS APIs", "Template service"]
+            },
+
+            {
+              id: "intent-aggregator", layer: "ai", icon: "IA", title: "Audience Intent Aggregator", short: "Sanitize, cluster and rank audience direction", status: "target",
+              description: "Transforms high-volume chat, votes and host commands into a compact, policy-filtered intent object. Deterministic poll totals remain authoritative.",
+              responsibilities: ["Deduplicate spam and repeated suggestions", "Cluster semantically similar scene ideas", "Weight eligible votes and trust signals", "Produce a compact intent summary for the director"],
+              interfaces: ["Event bus", "Moderation service", "AI show director"],
+              events: ["audience.intent.accepted", "poll.closed"],
+              tech: ["Streaming aggregation", "Embeddings", "Policy filters"]
+            },
+            {
+              id: "show-director", layer: "ai", icon: "SD", title: "AI Show Director", short: "Generate structured, deadline-aware scene plans", status: "target",
+              description: "Creates a strict ScenePlan from show state, approved product facts, audience intent and the scene bible. It does not directly mutate prices, orders or inventory.",
+              responsibilities: ["Select an approved scene mode and duration", "Compile script, visual direction and continuity references", "Attach generation deadline and fallback asset", "Stay within model, cost and policy constraints"],
+              interfaces: ["Structured LLM output", "Product facts API", "Durable workflow"],
+              events: ["scene.plan.created", "scene.plan.approved"],
+              tech: ["JSON Schema", "LLM", "Scene bible", "Prompt versioning"]
+            },
+            {
+              id: "policy-guard", layer: "ai", icon: "PG", title: "Prompt & Policy Guard", short: "Safety, claims, injection and budget enforcement", status: "target",
+              description: "A deterministic policy boundary between plans and generation. It verifies allowed models, prompt content, approved commercial claims, data handling, cost ceilings and moderation state.",
+              responsibilities: ["Reject prompt injection and prohibited content", "Verify product claims against approved facts", "Enforce endpoint allowlists and generation budgets", "Redact private or regulated information"],
+              interfaces: ["Policy engine", "Moderation models", "Audit log"],
+              events: ["scene.plan.rejected", "generation.policy_passed"],
+              tech: ["OPA/rules engine", "Moderation", "PII filters"]
+            },
+            {
+              id: "fal-orchestrator", layer: "ai", icon: "fal", title: "fal Orchestrator", short: "Model routing, queue submission, deadlines and webhooks", status: "target",
+              description: "The only internal service allowed to call fal. It normalizes provider contracts, selects approved endpoints, maps request IDs, verifies webhooks, rejects stale results and controls cost.",
+              responsibilities: ["Choose realtime, streaming or queued inference", "Submit validated requests through fal clients", "Verify signed completion webhooks idempotently", "Apply retry, timeout, fallback and cancellation policy"],
+              interfaces: ["fal realtime/WebSocket", "fal queue and webhooks", "Durable segment workflow"],
+              events: ["fal.job.submitted", "fal.job.completed", "fal.job.failed", "segment.stale"],
+              tech: ["Python", "fal-client", "ED25519 verification", "Temporal"]
+            },
+            {
+              id: "fal-runtime", layer: "ai", icon: "GPU", title: "fal Realtime / Queue Runtime", short: "Managed GPU inference for image, video and audio", status: "external",
+              description: "fal executes approved image, video, audio and multimodal models. Realtime endpoints support persistent low-latency sessions; queued inference provides durability for longer video jobs.",
+              responsibilities: ["Run marketplace or custom fal.App models", "Autoscale GPU runners and maintain warm capacity", "Return progressive, realtime or queued results", "Expose logs, analytics and request identifiers"],
+              interfaces: ["HTTPS", "WebSocket/msgpack", "Webhooks", "fal CDN"],
+              events: ["provider.request.accepted", "provider.result.ready"],
+              tech: ["fal Serverless", "GPU runners", "WebSocket", "Queue"]
+            },
+
+            {
+              id: "asset-qa", layer: "media", icon: "QA", title: "Generated Asset QA", short: "Decode, safety, identity and product verification", status: "target",
+              description: "Validates every generated segment before it becomes broadcast-eligible, including decode integrity, duration, loudness, policy, presenter identity, logos and product fidelity.",
+              responsibilities: ["Validate codec, duration, frame rate and audio", "Run visual/audio safety classification", "Verify presenter and product consistency", "Escalate uncertain output to human review"],
+              interfaces: ["Object storage", "Moderation models", "Segment workflow"],
+              events: ["segment.qa.passed", "segment.qa.rejected"],
+              tech: ["FFmpeg", "Computer vision", "Human review"]
+            },
+            {
+              id: "segment-scheduler", layer: "media", icon: "SQ", title: "Segment Scheduler", short: "Rolling buffer, deadlines, stale rejection and fallback", status: "target",
+              description: "Maintains a rolling ready-to-air queue and ensures late or rejected generation never creates a broadcast gap. Each slot has a deadline, stale time and fallback asset.",
+              responsibilities: ["Maintain 15–30 seconds of ready content", "Reject segments that miss program deadlines", "Select approved fallback clips", "Issue deterministic on-air commands"],
+              interfaces: ["Durable workflow", "Asset QA", "Compositor control API"],
+              events: ["segment.ready", "segment.fallback_activated", "segment.on_air"],
+              tech: ["Temporal", "Priority queue", "Program clock"]
+            },
+            {
+              id: "compositor", layer: "media", icon: "MX", title: "Cloud Compositor", short: "Mix host, AI media, graphics, captions and audio", status: "target",
+              description: "Combines contribution tracks and approved assets into one continuous program with transitions, lower thirds, product graphics, captions, audio ducking and emergency slates.",
+              responsibilities: ["Mix host, guest and generated media", "Render prices and inventory from deterministic data", "Apply scene transitions and audio normalization", "Run active/standby for high-value events"],
+              interfaces: ["RTP/media tracks", "Scheduler commands", "Commerce overlays", "Encoder output"],
+              events: ["compositor.scene_changed", "compositor.degraded"],
+              tech: ["FFmpeg/GStreamer", "GPU composition", "Active/standby"]
+            },
+            {
+              id: "encoder-origin", layer: "media", icon: "OR", title: "Encoder / Live Origin", short: "Adaptive renditions, packaging and origin serving", status: "target",
+              description: "Encodes the final program into adaptive bitrate renditions, packages low-latency segments and exposes a protected origin to the playback CDN.",
+              responsibilities: ["Encode multiple bitrate and resolution ladders", "Package LL-HLS/DASH manifests", "Maintain program timestamps and keyframes", "Expose health and origin failover"],
+              interfaces: ["SRT/RTP input", "HLS/DASH output", "CDN origin shield"],
+              events: ["origin.stream_started", "encoder.frame_dropped"],
+              tech: ["H.264/H.265/AV1", "LL-HLS", "Origin shield"]
+            },
+
+            {
+              id: "postgres", layer: "data", icon: "PG", title: "PostgreSQL", short: "Transactional source of truth", status: "target",
+              description: "Stores sessions, products, offers, inventory, carts, orders, policy versions and durable workflow references under transactional guarantees.",
+              responsibilities: ["Enforce transactional integrity", "Support atomic inventory operations", "Publish domain events through an outbox", "Maintain replicas, backups and recovery"],
+              interfaces: ["SQL", "CDC/outbox", "Read replicas"],
+              events: ["outbox.record.created"],
+              tech: ["PostgreSQL", "Migrations", "PITR"]
+            },
+            {
+              id: "redis", layer: "data", icon: "RD", title: "Redis", short: "Presence, counters, rate limits and ephemeral room data", status: "target",
+              description: "Holds latency-sensitive, recoverable room state such as presence, counters, rate-limit buckets, temporary votes and fanout coordination.",
+              responsibilities: ["Track online presence and room counters", "Apply distributed rate limits", "Cache session snapshots and catalog reads", "Coordinate ephemeral pub/sub where appropriate"],
+              interfaces: ["RESP", "Pub/Sub or Streams"],
+              events: ["cache.invalidated"],
+              tech: ["Redis Cluster", "TTL", "Lua/atomic ops"]
+            },
+            {
+              id: "event-bus", layer: "data", icon: "EB", title: "Event Backbone", short: "Durable domain events and asynchronous fanout", status: "target",
+              description: "Decouples interaction, commerce, AI, analytics and notification services using durable ordered event streams and idempotent consumers.",
+              responsibilities: ["Persist critical domain events", "Fan out events to independent consumers", "Support replay, dead-lettering and schema evolution", "Separate critical events from high-volume ephemeral reactions"],
+              interfaces: ["Kafka/Redpanda/NATS JetStream", "Schema registry"],
+              events: ["All domain events"],
+              tech: ["Kafka", "Redpanda", "NATS JetStream"]
+            },
+            {
+              id: "asset-storage", layer: "data", icon: "OS", title: "Object Storage", short: "References, generated media, recordings and thumbnails", status: "target",
+              description: "Private-by-default storage for product reference packs, generated intermediates, approved broadcast segments, thumbnails and compliance recordings.",
+              responsibilities: ["Store versioned reference and generated assets", "Apply retention, access and signed URL policy", "Replicate approved media for broadcast", "Track content lineage and checksums"],
+              interfaces: ["S3-compatible API", "Signed URLs", "Media CDN"],
+              events: ["asset.created", "asset.approved", "asset.expired"],
+              tech: ["S3/Object storage", "KMS", "Lifecycle rules"]
+            },
+            {
+              id: "analytics", layer: "data", icon: "WH", title: "Analytics Warehouse", short: "QoE, funnel, AI cost and safety analytics", status: "target",
+              description: "Combines playback, interaction, generation, commerce and moderation telemetry for business intelligence, operations and experimentation.",
+              responsibilities: ["Measure stream quality and conversion funnel", "Attribute AI cost by merchant, room and segment", "Track moderation and fallback rates", "Power dashboards and experimentation"],
+              interfaces: ["Event ingestion", "Batch/stream ETL", "BI tools"],
+              events: ["analytics.fact_loaded"],
+              tech: ["ClickHouse/BigQuery/Snowflake", "dbt", "BI"]
+            },
+
+            {
+              id: "payment-provider", layer: "external", icon: "PAY", title: "Payment Provider", short: "Tokenized payment authorization and settlement", status: "external",
+              description: "Processes payment details outside the core application’s PCI scope and returns signed, retryable payment lifecycle events.",
+              responsibilities: ["Tokenize payment methods", "Authorize and capture payments", "Deliver signed idempotent webhooks", "Support refunds and disputes"],
+              interfaces: ["HTTPS API", "Signed webhooks"],
+              events: ["payment.authorized", "payment.completed", "payment.refunded"],
+              tech: ["Stripe/Adyen/PayPal", "PCI DSS"]
+            },
+            {
+              id: "shipping-provider", layer: "external", icon: "SHP", title: "Shipping & Fulfilment", short: "Rates, labels, tracking and delivery updates", status: "external",
+              description: "Provides address validation, shipping rates, fulfilment labels and tracking updates after an order is accepted.",
+              responsibilities: ["Validate destinations and serviceability", "Create labels and fulfilment requests", "Publish tracking milestones", "Handle carrier exceptions"],
+              interfaces: ["Carrier/3PL APIs", "Webhooks"],
+              events: ["shipment.created", "shipment.delivered"],
+              tech: ["Shippo/3PL/Carrier APIs"]
+            },
+            {
+              id: "identity-provider", layer: "external", icon: "ID", title: "Identity Provider", short: "Authentication, MFA and creator administration", status: "external",
+              description: "Authenticates viewers, hosts, merchants and operators, then issues short-lived identities used by API and realtime authorization layers.",
+              responsibilities: ["Support social, passwordless and enterprise login", "Enforce MFA for privileged producer roles", "Issue and rotate signed tokens", "Expose directory and account lifecycle hooks"],
+              interfaces: ["OIDC/OAuth 2.0", "JWKS", "SCIM/webhooks"],
+              events: ["identity.login", "identity.role_changed"],
+              tech: ["Auth0/Firebase/Cognito", "OIDC"]
+            },
+
+            {
+              id: "observability", layer: "ops", icon: "OBS", title: "Observability", short: "Metrics, logs, traces, alerts and incident context", status: "target",
+              description: "Correlates session, scene, fal request, playback, cart and order identifiers across application, media and provider boundaries.",
+              responsibilities: ["Collect OpenTelemetry traces and structured logs", "Monitor QoE, AI deadlines, costs and checkout SLOs", "Alert on failures and budget anomalies", "Support session replay and incident investigation"],
+              interfaces: ["OTLP", "Prometheus", "Log drains", "fal analytics"],
+              events: ["slo.breached", "incident.created"],
+              tech: ["OpenTelemetry", "Prometheus", "Grafana", "Loki"]
+            },
+            {
+              id: "cloud-runtime", layer: "ops", icon: "K8S", title: "Cloud Runtime & Delivery", short: "Multi-AZ compute, secrets, autoscaling and CI/CD", status: "target",
+              description: "Runs the non-fal control plane with high availability, progressive delivery, secrets management, infrastructure as code and disaster recovery.",
+              responsibilities: ["Deploy stateless services across availability zones", "Autoscale gateways and workers", "Protect secrets through KMS/Vault", "Perform canary rollout and rollback"],
+              interfaces: ["Kubernetes/ECS", "CI/CD", "Service mesh"],
+              events: ["deployment.started", "deployment.rolled_back"],
+              tech: ["Kubernetes", "Terraform", "ArgoCD/GitHub Actions", "KMS"]
+            }
+          ],
+          edges: [
+            { from: "host-studio", to: "media-ingest", flow: ["playback"], kind: "media", label: "host media" },
+            { from: "media-ingest", to: "compositor", flow: ["playback"], kind: "media", label: "contribution tracks" },
+            { from: "compositor", to: "encoder-origin", flow: ["playback", "ai", "commerce"], kind: "media", label: "final program" },
+            { from: "encoder-origin", to: "playback-cdn", flow: ["playback", "ai", "commerce"], kind: "media", label: "ABR stream" },
+            { from: "playback-cdn", to: "viewer-apps", flow: ["playback", "ai", "commerce"], kind: "media", label: "global playback" },
+
+            { from: "viewer-apps", to: "realtime-gateway", flow: ["interaction", "ai"], kind: "sync", label: "chat / votes" },
+            { from: "realtime-gateway", to: "interaction-service", flow: ["interaction", "ai"], kind: "sync", label: "ordered events" },
+            { from: "interaction-service", to: "redis", flow: ["interaction"], kind: "data", label: "presence / counters" },
+            { from: "interaction-service", to: "event-bus", flow: ["interaction", "ai"], kind: "async", label: "audience events" },
+            { from: "event-bus", to: "realtime-gateway", flow: ["interaction"], kind: "async", label: "room fanout" },
+            { from: "realtime-gateway", to: "viewer-apps", flow: ["interaction"], kind: "sync", label: "snapshot / replay" },
+
+            { from: "host-studio", to: "api-gateway", flow: ["ai", "operations"], kind: "sync", label: "producer commands" },
+            { from: "moderator-console", to: "api-gateway", flow: ["ai", "operations"], kind: "sync", label: "moderation commands" },
+            { from: "identity-provider", to: "api-gateway", flow: ["commerce", "operations"], kind: "sync", label: "OIDC / JWKS" },
+            { from: "api-gateway", to: "live-session", flow: ["operations"], kind: "sync", label: "session control" },
+            { from: "live-session", to: "postgres", flow: ["operations"], kind: "data", label: "transaction" },
+            { from: "live-session", to: "event-bus", flow: ["operations"], kind: "async", label: "session events" },
+
+            { from: "event-bus", to: "intent-aggregator", flow: ["ai"], kind: "async", label: "sanitized intent" },
+            { from: "intent-aggregator", to: "show-director", flow: ["ai"], kind: "sync", label: "winning direction" },
+            { from: "commerce-service", to: "show-director", flow: ["ai"], kind: "sync", label: "approved facts" },
+            { from: "show-director", to: "policy-guard", flow: ["ai"], kind: "sync", label: "scene plan" },
+            { from: "policy-guard", to: "fal-orchestrator", flow: ["ai"], kind: "sync", label: "approved request" },
+            { from: "fal-orchestrator", to: "fal-runtime", flow: ["ai"], kind: "async", label: "realtime / queue" },
+            { from: "fal-runtime", to: "asset-storage", flow: ["ai"], kind: "async", label: "generated asset" },
+            { from: "asset-storage", to: "asset-qa", flow: ["ai"], kind: "data", label: "media + metadata" },
+            { from: "asset-qa", to: "segment-scheduler", flow: ["ai"], kind: "async", label: "approved segment" },
+            { from: "segment-scheduler", to: "compositor", flow: ["ai"], kind: "sync", label: "on-air command" },
+
+            { from: "viewer-apps", to: "api-gateway", flow: ["commerce"], kind: "sync", label: "cart / checkout" },
+            { from: "api-gateway", to: "commerce-service", flow: ["commerce"], kind: "sync", label: "validated request" },
+            { from: "commerce-service", to: "postgres", flow: ["commerce"], kind: "data", label: "atomic commit" },
+            { from: "commerce-service", to: "payment-provider", flow: ["commerce"], kind: "sync", label: "authorize payment" },
+            { from: "payment-provider", to: "commerce-service", flow: ["commerce"], kind: "async", label: "signed webhook" },
+            { from: "commerce-service", to: "shipping-provider", flow: ["commerce"], kind: "async", label: "fulfil order" },
+            { from: "commerce-service", to: "event-bus", flow: ["commerce"], kind: "async", label: "commerce events" },
+            { from: "commerce-service", to: "compositor", flow: ["commerce"], kind: "sync", label: "deterministic overlay" },
+
+            { from: "event-bus", to: "analytics", flow: ["operations"], kind: "async", label: "domain facts" },
+            { from: "analytics", to: "observability", flow: ["operations"], kind: "data", label: "dashboards" },
+            { from: "cloud-runtime", to: "api-gateway", flow: ["operations"], kind: "data", label: "runtime" },
+            { from: "observability", to: "cloud-runtime", flow: ["operations"], kind: "async", label: "alerts / rollback" }
+          ],
+          flows: {
+            playback: {
+              title: "Live playback path",
+              summary: "The host contribution becomes one continuous adaptive stream and is distributed by the CDN. fal is not used as the mass-viewer delivery layer.",
+              steps: ["host-studio", "media-ingest", "compositor", "encoder-origin", "playback-cdn", "viewer-apps"],
+              events: ["track.published", "ingest.connected", "compositor.scene_changed", "origin.stream_started", "playback.manifest.ready", "playback.started"]
+            },
+            interaction: {
+              title: "Audience realtime path",
+              summary: "Viewer events travel through regional WebSockets, are validated by the interaction service, stored or aggregated, then return through ordered room fanout and snapshot recovery.",
+              steps: ["viewer-apps", "realtime-gateway", "interaction-service", "redis", "event-bus", "realtime-gateway", "viewer-apps"],
+              events: ["vote.cast", "realtime.event.received", "vote.accepted", "presence.updated", "poll.updated", "room.event.fanout", "client.sequence.advanced"]
+            },
+            ai: {
+              title: "AI-generated segment path",
+              summary: "Audience intent becomes a constrained scene plan, passes deterministic policy, runs through fal, is quality checked and scheduled, then joins the same continuous broadcast as the human host.",
+              steps: ["viewer-apps", "realtime-gateway", "interaction-service", "event-bus", "intent-aggregator", "show-director", "policy-guard", "fal-orchestrator", "fal-runtime", "asset-storage", "asset-qa", "segment-scheduler", "compositor", "encoder-origin", "playback-cdn", "viewer-apps"],
+              events: ["audience.suggestion.sent", "realtime.event.received", "audience.intent.accepted", "poll.closed", "intent.clustered", "scene.plan.created", "generation.policy_passed", "fal.job.submitted", "fal.job.completed", "asset.created", "segment.qa.passed", "segment.ready", "segment.on_air", "origin.segment.published", "cdn.edge.updated", "viewer.segment.visible"]
+            },
+            commerce: {
+              title: "Purchase path",
+              summary: "The viewer enters checkout through the authenticated API, commerce revalidates product truth and inventory, payment completes idempotently, and product data is also rendered as deterministic broadcast graphics.",
+              steps: ["viewer-apps", "api-gateway", "commerce-service", "postgres", "payment-provider", "commerce-service", "event-bus", "compositor", "encoder-origin", "playback-cdn", "viewer-apps"],
+              events: ["cart.item_added", "api.request.accepted", "checkout.created", "inventory.reserved", "payment.authorized", "order.created", "commerce.event.published", "product.overlay.updated", "origin.segment.published", "cdn.edge.updated", "order.confirmation.visible"]
+            }
+          }
+        },
+
+        current: {
+          title: "Implemented v0.1 vertical slice",
+          badge: "runnable modular monolith",
+          summary: "The starter proves contracts and failure behavior with a FastAPI modular monolith, SQLite, an in-process sequenced event broker, WebSocket room hub, local checkout and a fal queue boundary with signed webhooks.",
+          nodes: [
+            {
+              id: "c-host", layer: "clients", icon: "HS", title: "Host Studio", short: "Session, product, poll and segment controls", status: "implemented",
+              description: "A working browser studio that creates a room, starts and ends the session, pins products, opens polls, requests a segment, previews it and marks it on air.",
+              responsibilities: ["Control the demo live-session lifecycle", "Pin catalog products and open polls", "Request mock or fal-backed generation", "Preview and put READY segments on air"],
+              interfaces: ["FastAPI REST", "WebSocket room events"],
+              events: ["live.session.started", "product.pinned", "segment.on_air"],
+              tech: ["Vanilla JS", "HTML/CSS", "WebSocket"]
+            },
+            {
+              id: "c-viewer", layer: "clients", icon: "VA", title: "Viewer App", short: "Playback, chat, voting, cart and mock checkout", status: "implemented",
+              description: "A working viewer page that watches the demo program, receives sequenced events, recovers after reconnect, votes, chats and completes idempotent local checkout.",
+              responsibilities: ["Play demo and generated video assets", "Apply snapshots and replayed events", "Show pinned products and polls", "Manage cart and complete mock checkout"],
+              interfaces: ["FastAPI REST", "WebSocket", "Static media"],
+              events: ["session.snapshot", "poll.updated", "product.pinned"],
+              tech: ["Vanilla JS", "HTML5 video"]
+            },
+            {
+              id: "c-tests", layer: "clients", icon: "T", title: "Automated Test Suite", short: "Contracts, ordering, deadlines and webhook security", status: "implemented",
+              description: "Twenty automated tests cover the REST and WebSocket flow, concurrent ordering, atomic inventory, idempotent checkout, segment timeout behavior and ED25519 webhook verification.",
+              responsibilities: ["Protect event ordering and replay invariants", "Verify generation deadline and stale-result handling", "Test webhook duplication and modified-body rejection", "Validate checkout atomicity and idempotency"],
+              interfaces: ["pytest", "FastAPI test client"],
+              events: ["test.passed"],
+              tech: ["pytest", "pytest-asyncio"]
+            },
+
+            {
+              id: "c-api", layer: "edge", icon: "API", title: "FastAPI Control Plane", short: "REST routes, validation and static applications", status: "implemented",
+              description: "The single deployable backend exposes live-session, product, poll, cart, checkout, generation and webhook routes while serving the studio and viewer applications.",
+              responsibilities: ["Expose typed HTTP endpoints", "Create application services at startup", "Serve browser applications and demo media", "Translate domain errors into API responses"],
+              interfaces: ["HTTP/JSON", "Static files", "Internal Python services"],
+              events: ["api.request.completed"],
+              tech: ["FastAPI", "Pydantic", "Uvicorn"]
+            },
+            {
+              id: "c-ws", layer: "edge", icon: "WS", title: "WebSocket Room Hub", short: "Snapshot-first connection, fanout and replay", status: "implemented",
+              description: "The in-process RoomHub maintains connected browser sockets. New connections receive a snapshot before subsequent live events, and reconnects replay events after a supplied sequence.",
+              responsibilities: ["Accept room WebSockets", "Deliver snapshot before new events", "Fan out sequenced room events", "Remove disconnected sockets safely"],
+              interfaces: ["WebSocket", "Event broker"],
+              events: ["session.snapshot", "room.event"],
+              tech: ["FastAPI WebSocket", "asyncio"]
+            },
+
+            {
+              id: "c-services", layer: "core", icon: "SV", title: "Domain Services", short: "Sessions, catalog, polls, carts and checkout", status: "implemented",
+              description: "Python service and store boundaries implement the core live-commerce invariants inside a modular monolith that can later be separated into network services.",
+              responsibilities: ["Manage room lifecycle and snapshots", "Keep catalog authoritative", "Accept deterministic votes", "Atomically decrement inventory and deduplicate checkout"],
+              interfaces: ["Python methods", "SQLite transactions", "Event broker"],
+              events: ["live.session.created", "vote.accepted", "order.created"],
+              tech: ["Python", "Pydantic", "SQLite"]
+            },
+            {
+              id: "c-broker", layer: "core", icon: "EB", title: "Sequenced Event Broker", short: "Per-session ordering and persistent replay", status: "implemented",
+              description: "Assigns monotonically increasing sequence numbers per live session, persists events, and publishes them to the WebSocket room hub in order.",
+              responsibilities: ["Allocate ordered per-session sequences", "Persist events before fanout", "Serialize concurrent publication", "Support reconnect replay"],
+              interfaces: ["Store", "RoomHub"],
+              events: ["All current domain events"],
+              tech: ["asyncio lock", "SQLite"]
+            },
+
+            {
+              id: "c-generation", layer: "ai", icon: "GS", title: "Generation Service", short: "Segment state machine, deadlines, QA seam and fallback", status: "implemented",
+              description: "Owns the segment workflow from PLANNED through READY and ON_AIR, with a proactive deadline watchdog, stale-result rejection, failure events and fallback activation.",
+              responsibilities: ["Validate requests and create segment records", "Run prompt moderation seam", "Watch generation deadlines", "Process provider result into QA and READY"],
+              interfaces: ["Generation gateway", "Store", "Event broker"],
+              events: ["scene.plan.created", "fal.job.submitted", "segment.ready", "segment.fallback_activated"],
+              tech: ["Python", "asyncio", "State machine"]
+            },
+            {
+              id: "c-gateway", layer: "ai", icon: "GW", title: "Generation Gateway", short: "Provider abstraction and model allowlist", status: "implemented",
+              description: "A single provider boundary selects local mock or fal queue mode and validates model-specific arguments through typed adapters.",
+              responsibilities: ["Keep provider details out of domain logic", "Restrict model IDs to configuration", "Normalize request and result contracts", "Return provider request identifiers"],
+              interfaces: ["Local mock", "fal SyncClient.submit"],
+              events: ["provider.request.created"],
+              tech: ["Adapter pattern", "fal-client optional"]
+            },
+            {
+              id: "c-mock", layer: "ai", icon: "MO", title: "Local Mock Generator", short: "Offline, deterministic segment completion", status: "implemented",
+              description: "The default generation mode completes against bundled media so the full studio-to-viewer workflow runs without a fal account.",
+              responsibilities: ["Return a known demo segment", "Simulate asynchronous completion", "Enable repeatable automated tests"],
+              interfaces: ["GenerationGateway"],
+              events: ["mock.job.completed"],
+              tech: ["Bundled MP4", "asyncio"]
+            },
+            {
+              id: "c-falqueue", layer: "ai", icon: "fal", title: "fal Queue Submission", short: "Typed H3 Max submission with public webhook callback", status: "implemented",
+              description: "Queue mode submits validated arguments with the official fal client and stores the returned request ID for correlation and webhook completion.",
+              responsibilities: ["Build a typed model payload", "Submit asynchronously to an allowlisted endpoint", "Attach the configured HTTPS webhook URL", "Map fal request ID to the segment"],
+              interfaces: ["fal-client", "fal queue"],
+              events: ["fal.job.submitted"],
+              tech: ["fal-client", "MiniMax H3 Max adapter"]
+            },
+            {
+              id: "c-webhook", layer: "ai", icon: "WH", title: "Signed fal Webhook", short: "ED25519 verification, idempotency and conflict detection", status: "implemented",
+              description: "The completion endpoint hashes the exact raw body, checks timestamp tolerance, fetches fal JWKS, verifies ED25519 signatures and safely handles duplicate delivery.",
+              responsibilities: ["Verify all required signature headers", "Reject stale timestamp or changed body", "Claim request IDs idempotently", "Release claims when processing fails for retry"],
+              interfaces: ["POST /v1/webhooks/fal", "fal JWKS"],
+              events: ["fal.job.completed", "fal.job.failed"],
+              tech: ["cryptography", "ED25519", "SHA-256"]
+            },
+
+            {
+              id: "c-demo-media", layer: "media", icon: "MP4", title: "Bundled Demo Media", short: "Continuous program and generated segment fixtures", status: "implemented",
+              description: "Static MP4 fixtures allow the application to demonstrate normal program playback and a generated segment without external ingest or transcoding infrastructure.",
+              responsibilities: ["Provide a deterministic normal program", "Provide a deterministic generated segment", "Support offline development and tests"],
+              interfaces: ["FastAPI StaticFiles", "HTML5 video"],
+              events: ["media.loaded"],
+              tech: ["MP4", "StaticFiles"]
+            },
+            {
+              id: "c-source-switch", layer: "media", icon: "SW", title: "Viewer Source Switch", short: "Demo-only generated segment insertion", status: "implemented",
+              description: "When a segment enters ON_AIR, the viewer temporarily changes browser video sources. The production replacement is a cloud compositor feeding one continuous CDN stream.",
+              responsibilities: ["React to segment.on_air", "Switch to generated media", "Return to the demo program after playback"],
+              interfaces: ["WebSocket event", "HTML5 video source"],
+              events: ["segment.on_air"],
+              tech: ["JavaScript", "HTML5 video"]
+            },
+
+            {
+              id: "c-sqlite", layer: "data", icon: "DB", title: "SQLite Store", short: "Sessions, products, events, carts and segment state", status: "implemented",
+              description: "A local transactional store keeps the v0.1 vertical slice simple while preserving schemas and invariants that can migrate to PostgreSQL.",
+              responsibilities: ["Persist products, rooms and events", "Provide atomic inventory updates", "Store webhook claims and segment states", "Build session snapshots"],
+              interfaces: ["SQLite SQL"],
+              events: ["transaction.committed"],
+              tech: ["SQLite", "Python sqlite3"]
+            },
+
+            {
+              id: "c-falexternal", layer: "external", icon: "GPU", title: "fal Managed Runtime", short: "Optional external queue-mode inference", status: "external",
+              description: "When FAL_MODE=queue is configured, the starter invokes fal instead of the bundled mock and expects a signed completion webhook at a public HTTPS callback.",
+              responsibilities: ["Execute the configured model", "Store or return generated media", "Deliver signed job completion"],
+              interfaces: ["fal queue API", "Webhook"],
+              events: ["provider.result.ready"],
+              tech: ["fal Serverless", "GPU"]
+            },
+            {
+              id: "c-checkoutmock", layer: "external", icon: "PAY", title: "Local Checkout Boundary", short: "Payment-provider seam without real card processing", status: "implemented",
+              description: "The v0.1 checkout validates inventory and creates a local order without collecting real payment credentials, leaving a clean seam for a production payment provider.",
+              responsibilities: ["Revalidate cart totals and inventory", "Commit inventory atomically", "Deduplicate repeated checkout requests"],
+              interfaces: ["POST /v1/checkout-sessions"],
+              events: ["checkout.completed"],
+              tech: ["Local domain service"]
+            },
+
+            {
+              id: "c-runtime", layer: "ops", icon: "PY", title: "Single Python Runtime", short: "One deployable FastAPI process", status: "implemented",
+              description: "The current slice intentionally runs as a single process to minimize operational overhead while keeping domain boundaries explicit in code.",
+              responsibilities: ["Construct services during application lifespan", "Serve APIs, WebSockets and static apps", "Shut down generation tasks safely"],
+              interfaces: ["Uvicorn", "Docker"],
+              events: ["application.started", "application.stopped"],
+              tech: ["Python 3.11–3.13", "FastAPI", "Docker"]
+            },
+            {
+              id: "c-logs", layer: "ops", icon: "LOG", title: "Local Logs & Health", short: "Health endpoint and framework logging", status: "implemented",
+              description: "The starter exposes a health endpoint and structured application logging; production metrics, tracing, alerting and log drains remain roadmap items.",
+              responsibilities: ["Expose environment and fal mode health", "Capture application and webhook errors", "Support local debugging"],
+              interfaces: ["GET /health", "stdout logs"],
+              events: ["health.ok"],
+              tech: ["Python logging", "FastAPI"]
+            }
+          ],
+          edges: [
+            { from: "c-demo-media", to: "c-viewer", flow: ["playback"], kind: "media", label: "static program" },
+            { from: "c-viewer", to: "c-ws", flow: ["interaction"], kind: "sync", label: "chat / vote" },
+            { from: "c-ws", to: "c-broker", flow: ["interaction"], kind: "sync", label: "validated input" },
+            { from: "c-broker", to: "c-ws", flow: ["interaction", "ai"], kind: "async", label: "sequenced event" },
+            { from: "c-ws", to: "c-viewer", flow: ["interaction", "ai"], kind: "sync", label: "snapshot / event" },
+
+            { from: "c-host", to: "c-api", flow: ["ai", "operations"], kind: "sync", label: "producer API" },
+            { from: "c-viewer", to: "c-api", flow: ["commerce"], kind: "sync", label: "cart / checkout" },
+            { from: "c-api", to: "c-services", flow: ["commerce", "operations"], kind: "sync", label: "domain command" },
+            { from: "c-services", to: "c-sqlite", flow: ["commerce", "operations"], kind: "data", label: "transaction" },
+            { from: "c-services", to: "c-broker", flow: ["commerce", "operations"], kind: "async", label: "domain event" },
+            { from: "c-services", to: "c-checkoutmock", flow: ["commerce"], kind: "sync", label: "local order" },
+
+            { from: "c-api", to: "c-generation", flow: ["ai"], kind: "sync", label: "segment request" },
+            { from: "c-generation", to: "c-gateway", flow: ["ai"], kind: "sync", label: "validated job" },
+            { from: "c-gateway", to: "c-mock", flow: ["ai"], kind: "async", label: "default mode" },
+            { from: "c-gateway", to: "c-falqueue", flow: ["ai"], kind: "async", label: "queue mode" },
+            { from: "c-falqueue", to: "c-falexternal", flow: ["ai"], kind: "async", label: "submit" },
+            { from: "c-falexternal", to: "c-webhook", flow: ["ai"], kind: "async", label: "signed result" },
+            { from: "c-webhook", to: "c-generation", flow: ["ai"], kind: "sync", label: "verified completion" },
+            { from: "c-mock", to: "c-generation", flow: ["ai"], kind: "async", label: "mock completion" },
+            { from: "c-generation", to: "c-broker", flow: ["ai"], kind: "async", label: "segment event" },
+            { from: "c-viewer", to: "c-source-switch", flow: ["ai"], kind: "sync", label: "on-air event" },
+            { from: "c-source-switch", to: "c-viewer", flow: ["ai"], kind: "media", label: "generated MP4" },
+
+            { from: "c-runtime", to: "c-api", flow: ["operations"], kind: "data", label: "process" },
+            { from: "c-tests", to: "c-api", flow: ["operations"], kind: "sync", label: "contract tests" },
+            { from: "c-api", to: "c-logs", flow: ["operations"], kind: "async", label: "health / logs" }
+          ],
+          flows: {
+            playback: {
+              title: "Current demo playback",
+              summary: "The vertical slice serves bundled MP4 media directly to the viewer. It deliberately does not pretend to provide a production ingest, compositor, origin or CDN.",
+              steps: ["c-demo-media", "c-viewer"],
+              events: ["media.loaded", "playback.started"]
+            },
+            interaction: {
+              title: "Current realtime interaction",
+              summary: "The viewer connects to the in-process WebSocket hub, domain events are sequenced and persisted, and reconnects receive snapshot-first recovery plus replay.",
+              steps: ["c-viewer", "c-ws", "c-broker", "c-ws", "c-viewer"],
+              events: ["vote.cast", "websocket.message.received", "vote.accepted", "room.event.fanout", "client.sequence.advanced"]
+            },
+            ai: {
+              title: "Current fal-backed segment workflow",
+              summary: "The studio creates a segment, the generation service selects queue mode, fal completes through a verified webhook, and a sequenced ON_AIR event tells the browser to switch to the generated asset.",
+              steps: ["c-host", "c-api", "c-generation", "c-gateway", "c-falqueue", "c-falexternal", "c-webhook", "c-generation", "c-broker", "c-ws", "c-viewer", "c-source-switch"],
+              events: ["segment.generate.requested", "api.request.accepted", "scene.plan.created", "generation.gateway.selected", "fal.job.submitted", "provider.result.ready", "webhook.signature.verified", "segment.ready", "segment.on_air", "room.event.fanout", "viewer.event.received", "media.source.switched"]
+            },
+            commerce: {
+              title: "Current local purchase workflow",
+              summary: "The viewer posts cart and checkout requests to FastAPI, domain services revalidate inventory and atomically commit an idempotent local order to SQLite.",
+              steps: ["c-viewer", "c-api", "c-services", "c-sqlite", "c-checkoutmock", "c-services", "c-broker", "c-ws", "c-viewer"],
+              events: ["cart.item_added", "api.request.accepted", "checkout.validated", "inventory.committed", "checkout.completed", "order.created", "commerce.event.published", "room.event.fanout", "order.confirmation.visible"]
+            }
+          }
+        }
+      };
+
+      const state = {
+        mode: "production",
+        flow: "all",
+        layer: "all",
+        selectedNode: null,
+        zoom: 1,
+        panX: 0,
+        panY: 0,
+        isDragging: false,
+        dragStartX: 0,
+        dragStartY: 0,
+        panStartX: 0,
+        panStartY: 0,
+        animationToken: 0,
+        playing: false
+      };
+
+      const els = {
+        viewport: document.getElementById("canvasViewport"),
+        canvas: document.getElementById("architectureCanvas"),
+        board: document.getElementById("boardGrid"),
+        edgeContainer: document.getElementById("edgeContainer"),
+        search: document.getElementById("searchInput"),
+        searchClear: document.getElementById("searchClear"),
+        componentCount: document.getElementById("componentCount"),
+        connectionCount: document.getElementById("connectionCount"),
+        zoomLabel: document.getElementById("zoomLabel"),
+        layerControls: document.getElementById("layerControls"),
+        inspector: document.getElementById("inspector"),
+        inspectorEyebrow: document.getElementById("inspectorEyebrow"),
+        inspectorTitle: document.getElementById("inspectorTitle"),
+        inspectorContent: document.getElementById("inspectorContent"),
+        eventLog: document.getElementById("eventLog"),
+        playButton: document.getElementById("playFlowButton"),
+        flowStatus: document.getElementById("flowStatus"),
+        flowStatusText: document.getElementById("flowStatusText"),
+        canvasModeTitle: document.getElementById("canvasModeTitle"),
+        canvasModeBadge: document.getElementById("canvasModeBadge")
+      };
+
+      function escapeHtml(value) {
+        return String(value ?? "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      function modeData() { return modes[state.mode]; }
+      function nodeById(id) { return modeData().nodes.find(node => node.id === id); }
+      function nodeElement(id) { return document.getElementById(`node-${id}`); }
+
+      function renderMode() {
+        stopWalkthrough();
+        state.selectedNode = null;
+        state.layer = "all";
+        els.search.value = "";
+        els.searchClear.classList.remove("visible");
+        document.querySelectorAll("[data-node-container]").forEach(container => { container.innerHTML = ""; });
+
+        const data = modeData();
+        data.nodes.forEach(node => {
+          const container = document.querySelector(`[data-node-container="${node.layer}"]`);
+          if (!container) return;
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "arch-node";
+          button.id = `node-${node.id}`;
+          button.dataset.nodeId = node.id;
+          button.dataset.layer = node.layer;
+          button.dataset.status = node.status;
+          button.style.setProperty("--accent", layerMeta[node.layer].color);
+          button.setAttribute("aria-label", `${node.title}: ${node.short}`);
+          button.innerHTML = `
+            <span class="node-icon" aria-hidden="true">${escapeHtml(node.icon)}</span>
+            <span class="node-title">${escapeHtml(node.title)}</span>
+            <span class="node-short">${escapeHtml(node.short)}</span>
+            <span class="node-status" aria-hidden="true"></span>`;
+          button.addEventListener("click", event => {
+            event.stopPropagation();
+            selectNode(node.id);
+          });
+          container.appendChild(button);
+        });
+
+        document.querySelectorAll(".layer").forEach(layer => {
+          const layerName = layer.dataset.layer;
+          const count = data.nodes.filter(node => node.layer === layerName).length;
+          layer.querySelector("[data-layer-count]").textContent = `${count} component${count === 1 ? "" : "s"}`;
+          layer.classList.toggle("layer-hidden", count === 0);
+        });
+
+        els.componentCount.textContent = String(data.nodes.length);
+        els.connectionCount.textContent = String(data.edges.length);
+        els.canvasModeTitle.textContent = data.title;
+        els.canvasModeBadge.textContent = data.badge;
+
+        renderEdges();
+        renderLayerControls();
+        renderOverview();
+        applyFilters();
+        requestAnimationFrame(() => {
+          updateEdges();
+          fitToViewport();
+        });
+        addLog("architecture.mode.changed", `${state.mode} · ${data.nodes.length} components`);
+      }
+
+      function renderEdges() {
+        els.edgeContainer.innerHTML = "";
+        modeData().edges.forEach((edge, index) => {
+          const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
+          group.classList.add("edge-group");
+          group.dataset.edgeIndex = String(index);
+          group.dataset.from = edge.from;
+          group.dataset.to = edge.to;
+          group.dataset.flow = edge.flow.join(" ");
+          group.dataset.kind = edge.kind || "sync";
+
+          const shadow = document.createElementNS("http://www.w3.org/2000/svg", "path");
+          shadow.classList.add("connector-shadow");
+          const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+          path.classList.add("connector");
+          path.setAttribute("marker-end", "url(#arrow)");
+          const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+          label.classList.add("edge-label");
+          label.textContent = edge.label || "";
+          group.append(shadow, path, label);
+          els.edgeContainer.appendChild(group);
+        });
+      }
+
+      function elementBox(el) {
+        const canvasRect = els.canvas.getBoundingClientRect();
+        const rect = el.getBoundingClientRect();
+        const z = state.zoom || 1;
+        return {
+          left: (rect.left - canvasRect.left) / z,
+          top: (rect.top - canvasRect.top) / z,
+          width: rect.width / z,
+          height: rect.height / z,
+          cx: (rect.left - canvasRect.left + rect.width / 2) / z,
+          cy: (rect.top - canvasRect.top + rect.height / 2) / z
+        };
+      }
+
+      function connectorGeometry(source, target) {
+        const s = elementBox(source);
+        const t = elementBox(target);
+        const dx = t.cx - s.cx;
+        const dy = t.cy - s.cy;
+        let x1 = s.cx, y1 = s.cy, x2 = t.cx, y2 = t.cy;
+        let d;
+
+        if (Math.abs(dx) >= Math.abs(dy)) {
+          const direction = dx >= 0 ? 1 : -1;
+          x1 = s.cx + direction * s.width / 2;
+          y1 = s.cy;
+          x2 = t.cx - direction * t.width / 2;
+          y2 = t.cy;
+          const bend = Math.max(38, Math.min(145, Math.abs(x2 - x1) * 0.48));
+          d = `M ${x1.toFixed(1)} ${y1.toFixed(1)} C ${(x1 + direction * bend).toFixed(1)} ${y1.toFixed(1)}, ${(x2 - direction * bend).toFixed(1)} ${y2.toFixed(1)}, ${x2.toFixed(1)} ${y2.toFixed(1)}`;
+        } else {
+          const direction = dy >= 0 ? 1 : -1;
+          x1 = s.cx;
+          y1 = s.cy + direction * s.height / 2;
+          x2 = t.cx;
+          y2 = t.cy - direction * t.height / 2;
+          const bend = Math.max(32, Math.min(120, Math.abs(y2 - y1) * 0.48));
+          d = `M ${x1.toFixed(1)} ${y1.toFixed(1)} C ${x1.toFixed(1)} ${(y1 + direction * bend).toFixed(1)}, ${x2.toFixed(1)} ${(y2 - direction * bend).toFixed(1)}, ${x2.toFixed(1)} ${y2.toFixed(1)}`;
+        }
+
+        return { d, labelX: (x1 + x2) / 2, labelY: (y1 + y2) / 2 - 5 };
+      }
+
+      function updateEdges() {
+        modeData().edges.forEach((edge, index) => {
+          const source = nodeElement(edge.from);
+          const target = nodeElement(edge.to);
+          const group = els.edgeContainer.querySelector(`[data-edge-index="${index}"]`);
+          if (!source || !target || !group) return;
+          const geometry = connectorGeometry(source, target);
+          group.querySelectorAll("path").forEach(path => path.setAttribute("d", geometry.d));
+          const label = group.querySelector("text");
+          label.setAttribute("x", geometry.labelX.toFixed(1));
+          label.setAttribute("y", geometry.labelY.toFixed(1));
+          group.style.display = "";
+        });
+      }
+
+      function renderLayerControls() {
+        els.layerControls.innerHTML = "";
+        const layers = ["all", ...Object.keys(layerMeta).filter(layer => modeData().nodes.some(node => node.layer === layer))];
+        layers.forEach(layer => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = `layer-button${layer === state.layer ? " active" : ""}`;
+          button.dataset.layerFilter = layer;
+          button.textContent = layer === "all" ? "All layers" : layerMeta[layer].label;
+          button.addEventListener("click", () => {
+            state.layer = layer;
+            renderLayerControls();
+            applyFilters();
+          });
+          els.layerControls.appendChild(button);
+        });
+      }
+
+      function activeFlowNodeIds() {
+        if (state.flow === "all") return new Set(modeData().nodes.map(node => node.id));
+        const ids = new Set();
+        modeData().edges.forEach(edge => {
+          if (edge.flow.includes(state.flow)) {
+            ids.add(edge.from);
+            ids.add(edge.to);
+          }
+        });
+        return ids;
+      }
+
+      function selectedNeighborhood() {
+        const ids = new Set();
+        if (!state.selectedNode) return ids;
+        ids.add(state.selectedNode);
+        modeData().edges.forEach(edge => {
+          if (edge.from === state.selectedNode) ids.add(edge.to);
+          if (edge.to === state.selectedNode) ids.add(edge.from);
+        });
+        return ids;
+      }
+
+      function applyFilters() {
+        const query = els.search.value.trim().toLowerCase();
+        const flowIds = activeFlowNodeIds();
+        const neighborhood = selectedNeighborhood();
+        const useNeighborhood = state.selectedNode && !query;
+
+        modeData().nodes.forEach(node => {
+          const el = nodeElement(node.id);
+          if (!el) return;
+          const haystack = [node.title, node.short, node.description, ...(node.responsibilities || []), ...(node.interfaces || []), ...(node.tech || [])].join(" ").toLowerCase();
+          const searchMatch = !query || haystack.includes(query);
+          const flowMatch = state.flow === "all" || flowIds.has(node.id);
+          const layerMatch = state.layer === "all" || node.layer === state.layer;
+          const neighborhoodMatch = !useNeighborhood || neighborhood.has(node.id);
+          const muted = !(searchMatch && flowMatch && layerMatch && neighborhoodMatch);
+          el.classList.toggle("node-muted", muted);
+          el.classList.toggle("search-hit", Boolean(query && searchMatch));
+          el.classList.toggle("node-selected", node.id === state.selectedNode);
+          el.classList.toggle("node-active", state.flow !== "all" && flowMatch && !muted);
+        });
+
+        document.querySelectorAll(".layer").forEach(layer => {
+          const layerName = layer.dataset.layer;
+          const shouldMute = state.layer !== "all" && state.layer !== layerName;
+          layer.classList.toggle("layer-muted", shouldMute);
+        });
+
+        modeData().edges.forEach((edge, index) => {
+          const group = els.edgeContainer.querySelector(`[data-edge-index="${index}"]`);
+          if (!group) return;
+          const flowMatch = state.flow === "all" || edge.flow.includes(state.flow);
+          const layerMatch = state.layer === "all" || nodeById(edge.from)?.layer === state.layer || nodeById(edge.to)?.layer === state.layer;
+          const searchMatch = !query || (!nodeElement(edge.from)?.classList.contains("node-muted") && !nodeElement(edge.to)?.classList.contains("node-muted"));
+          const neighborhoodMatch = !useNeighborhood || edge.from === state.selectedNode || edge.to === state.selectedNode;
+          const active = flowMatch && layerMatch && searchMatch && neighborhoodMatch;
+          group.classList.toggle("edge-muted", !active);
+          group.classList.toggle("edge-active", active && (state.flow !== "all" || useNeighborhood || Boolean(query) || state.layer !== "all"));
+        });
+      }
+
+      function selectNode(id) {
+        state.selectedNode = id;
+        renderNodeDetail(id);
+        applyFilters();
+        els.inspector.classList.add("open");
+        addLog("architecture.component.selected", nodeById(id)?.title || id);
+      }
+
+      function neighborsFor(id) {
+        const upstream = [];
+        const downstream = [];
+        modeData().edges.forEach(edge => {
+          if (edge.to === id) upstream.push(edge.from);
+          if (edge.from === id) downstream.push(edge.to);
+        });
+        return { upstream: [...new Set(upstream)], downstream: [...new Set(downstream)] };
+      }
+
+      function renderNodeDetail(id) {
+        const node = nodeById(id);
+        if (!node) return;
+        const neighbors = neighborsFor(id);
+        els.inspectorEyebrow.textContent = layerMeta[node.layer].label;
+        els.inspectorTitle.textContent = node.title;
+        const list = values => `<ul class="bullet-list">${values.map(value => `<li>${escapeHtml(value)}</li>`).join("")}</ul>`;
+        const tags = values => `<div class="tag-row">${values.map(value => `<span class="tag">${escapeHtml(value)}</span>`).join("")}</div>`;
+        const neighborButtons = ids => ids.length
+          ? ids.map(neighborId => `<button class="neighbor-link" type="button" data-neighbor-id="${escapeHtml(neighborId)}">${escapeHtml(nodeById(neighborId)?.title || neighborId)}</button>`).join("")
+          : `<span style="color:var(--faint);font-size:9px">None in this view</span>`;
+        const statusLabel = node.status === "implemented" ? "Implemented in starter" : node.status === "external" ? "External / managed" : node.status === "experimental" ? "Experimental" : "Production target";
+
+        els.inspectorContent.innerHTML = `
+          <div class="detail-accent">
+            <div class="detail-icon" style="--accent:${layerMeta[node.layer].color}">${escapeHtml(node.icon)}</div>
+            <div>
+              <b>${escapeHtml(node.title)}</b>
+              <span>${escapeHtml(node.short)}</span>
+              <span class="status-chip"><i></i>${escapeHtml(statusLabel)}</span>
+            </div>
+          </div>
+          <article class="detail-card"><h3>Role in the system</h3><p>${escapeHtml(node.description)}</p></article>
+          <article class="detail-card"><h3>Primary responsibilities</h3>${list(node.responsibilities || [])}</article>
+          <article class="detail-card"><h3>Interfaces</h3>${tags(node.interfaces || [])}</article>
+          <article class="detail-card"><h3>Important events</h3>${tags(node.events || [])}</article>
+          <article class="detail-card"><h3>Suggested technology</h3>${tags(node.tech || [])}</article>
+          <article class="detail-card">
+            <h3>Connected components</h3>
+            <div class="neighbor-grid">
+              <div class="neighbor-block"><b>Upstream</b>${neighborButtons(neighbors.upstream)}</div>
+              <div class="neighbor-block"><b>Downstream</b>${neighborButtons(neighbors.downstream)}</div>
+            </div>
+          </article>`;
+
+        els.inspectorContent.querySelectorAll("[data-neighbor-id]").forEach(button => {
+          button.addEventListener("click", () => selectNode(button.dataset.neighborId));
+        });
+      }
+
+      function renderOverview() {
+        state.selectedNode = null;
+        const data = modeData();
+        els.inspectorEyebrow.textContent = "Architecture guide";
+        els.inspectorTitle.textContent = "System overview";
+        els.inspectorContent.innerHTML = `
+          <article class="overview-card">
+            <h3>${escapeHtml(data.title)}</h3>
+            <p>${escapeHtml(data.summary)}</p>
+            <div class="overview-kpis">
+              <div class="overview-kpi"><b>${data.nodes.length}</b><span>components</span></div>
+              <div class="overview-kpi"><b>${data.edges.length}</b><span>connections</span></div>
+              <div class="overview-kpi"><b>${Object.keys(data.flows).length}</b><span>walkthroughs</span></div>
+              <div class="overview-kpi"><b>${new Set(data.nodes.map(node => node.layer)).size}</b><span>planes</span></div>
+            </div>
+          </article>
+          <article class="detail-card">
+            <h3>How to explore</h3>
+            <ul class="bullet-list">
+              <li>Click a component to inspect responsibilities, interfaces, events and neighbors.</li>
+              <li>Select a critical flow above the canvas, then play its animated walkthrough.</li>
+              <li>Search by service, technology or responsibility; press <strong>/</strong> to focus search.</li>
+              <li>Drag the canvas to pan, use the wheel or controls to zoom, and switch architecture modes at the top.</li>
+            </ul>
+          </article>
+          ${renderFlowGuide(state.flow === "all" ? "ai" : state.flow)}`;
+      }
+
+      function renderFlowGuide(flowName) {
+        const flow = modeData().flows[flowName];
+        if (!flow) return "";
+        const steps = flow.steps.map((id, index) => {
+          const node = nodeById(id);
+          return `<div class="walk-step" data-walk-step="${index}"><span class="walk-step-index">${index + 1}</span><div><b>${escapeHtml(node?.title || id)}</b><span>${escapeHtml(flow.events[index] || "state advanced")}</span></div></div>`;
+        }).join("");
+        return `<article class="walk-card"><h3>${escapeHtml(flow.title)}</h3><p>${escapeHtml(flow.summary)}</p><div class="walk-steps">${steps}</div></article>`;
+      }
+
+      function showFlowInInspector(flowName) {
+        const flow = modeData().flows[flowName];
+        if (!flow) return;
+        state.selectedNode = null;
+        els.inspectorEyebrow.textContent = "Critical flow";
+        els.inspectorTitle.textContent = flow.title;
+        els.inspectorContent.innerHTML = `
+          <article class="overview-card"><h3>What this demonstrates</h3><p>${escapeHtml(flow.summary)}</p></article>
+          ${renderFlowGuide(flowName)}
+          <article class="detail-card"><h3>Design invariant</h3><p>${escapeHtml(flowInvariant(flowName))}</p></article>`;
+        els.inspector.classList.add("open");
+      }
+
+      function flowInvariant(flowName) {
+        const invariants = {
+          playback: state.mode === "production" ? "Inference and audience delivery are separated: a fal session may transform or generate media, but the final one-to-many program is distributed through an origin and CDN." : "The current browser source switch is a demo boundary, not a production media architecture.",
+          interaction: "Per-session server sequences—not client arrival times—define event order, and reconnect recovery begins from a snapshot plus replay cursor.",
+          ai: "A provider completion never goes directly on air. Every segment must pass deadline, policy and QA gates before an explicit scheduler or producer command broadcasts it.",
+          commerce: "The catalog and commerce services remain authoritative. AI never invents prices, availability, discount eligibility or legally significant product claims."
+        };
+        return invariants[flowName] || "Critical operations are isolated and idempotent.";
+      }
+
+      function setFlow(flow) {
+        stopWalkthrough();
+        state.flow = flow;
+        document.querySelectorAll("[data-flow]").forEach(button => {
+          if (!button.classList.contains("flow-button")) return;
+          button.classList.toggle("active", button.dataset.flow === flow);
+        });
+        state.selectedNode = null;
+        applyFilters();
+        if (flow === "all") renderOverview(); else showFlowInInspector(flow);
+        addLog("architecture.flow.selected", flow);
+      }
+
+      function addLog(eventName, detail = "") {
+        const row = document.createElement("div");
+        row.className = "event-row";
+        const now = new Date();
+        const time = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+        row.innerHTML = `<time>${escapeHtml(time)}</time><code>${escapeHtml(eventName)}${detail ? ` · ${escapeHtml(detail)}` : ""}</code>`;
+        els.eventLog.appendChild(row);
+        while (els.eventLog.children.length > 30) els.eventLog.firstElementChild.remove();
+        els.eventLog.scrollTop = els.eventLog.scrollHeight;
+      }
+
+      function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
+
+      async function playWalkthrough() {
+        const flowName = state.flow === "all" ? "ai" : state.flow;
+        const flow = modeData().flows[flowName];
+        if (!flow) return;
+        if (state.playing) {
+          stopWalkthrough();
+          return;
+        }
+
+        state.playing = true;
+        const token = ++state.animationToken;
+        state.flow = flowName;
+        document.querySelectorAll(".flow-button").forEach(button => button.classList.toggle("active", button.dataset.flow === flowName));
+        state.selectedNode = null;
+        applyFilters();
+        showFlowInInspector(flowName);
+        els.playButton.classList.add("playing");
+        els.playButton.innerHTML = `<span aria-hidden="true">■</span><span>Stop walkthrough</span>`;
+        els.flowStatus.classList.add("visible");
+        addLog("walkthrough.started", flow.title);
+
+        for (let index = 0; index < flow.steps.length; index += 1) {
+          if (token !== state.animationToken) return;
+          document.querySelectorAll(".walk-active").forEach(el => el.classList.remove("walk-active"));
+          document.querySelectorAll(".walk-edge").forEach(el => el.classList.remove("walk-edge"));
+          document.querySelectorAll(".walk-step.active").forEach(el => el.classList.remove("active"));
+
+          const nodeId = flow.steps[index];
+          const node = nodeById(nodeId);
+          nodeElement(nodeId)?.classList.add("walk-active");
+          els.inspectorContent.querySelector(`[data-walk-step="${index}"]`)?.classList.add("active");
+          const eventName = flow.events[index] || "flow.step.completed";
+          els.flowStatusText.textContent = `${index + 1}/${flow.steps.length} · ${node?.title || nodeId} · ${eventName}`;
+          addLog(eventName, node?.title || nodeId);
+
+          if (index < flow.steps.length - 1) {
+            const nextId = flow.steps[index + 1];
+            const edgeGroups = [...els.edgeContainer.querySelectorAll(".edge-group")].filter(group => group.dataset.from === nodeId && group.dataset.to === nextId && group.dataset.flow.split(" ").includes(flowName));
+            edgeGroups.forEach(group => group.classList.add("walk-edge"));
+          }
+          await sleep(900);
+        }
+
+        if (token === state.animationToken) {
+          addLog("walkthrough.completed", flow.title);
+          els.flowStatusText.textContent = `${flow.title} complete`;
+          await sleep(1000);
+          stopWalkthrough(false);
+        }
+      }
+
+      function stopWalkthrough(log = true) {
+        if (state.playing && log) addLog("walkthrough.stopped", state.flow);
+        state.playing = false;
+        state.animationToken += 1;
+        document.querySelectorAll(".walk-active").forEach(el => el.classList.remove("walk-active"));
+        document.querySelectorAll(".walk-edge").forEach(el => el.classList.remove("walk-edge"));
+        document.querySelectorAll(".walk-step.active").forEach(el => el.classList.remove("active"));
+        els.playButton.classList.remove("playing");
+        els.playButton.innerHTML = `<span aria-hidden="true">▶</span><span>Play walkthrough</span>`;
+        els.flowStatus.classList.remove("visible");
+      }
+
+      function applyTransform() {
+        els.canvas.style.transform = `translate(${state.panX}px, ${state.panY}px) scale(${state.zoom})`;
+        els.zoomLabel.textContent = `${Math.round(state.zoom * 100)}%`;
+      }
+
+      function setZoom(nextZoom, anchorX = els.viewport.clientWidth / 2, anchorY = els.viewport.clientHeight / 2) {
+        const previous = state.zoom;
+        const next = Math.min(1.55, Math.max(0.42, nextZoom));
+        const worldX = (anchorX - state.panX) / previous;
+        const worldY = (anchorY - state.panY) / previous;
+        state.zoom = next;
+        state.panX = anchorX - worldX * next;
+        state.panY = anchorY - worldY * next;
+        applyTransform();
+      }
+
+      function fitToViewport() {
+        const padding = 24;
+        const scaleX = (els.viewport.clientWidth - padding * 2) / els.canvas.offsetWidth;
+        const scaleY = (els.viewport.clientHeight - padding * 2) / els.canvas.offsetHeight;
+        state.zoom = Math.min(1, Math.max(0.42, Math.min(scaleX, scaleY)));
+        state.panX = (els.viewport.clientWidth - els.canvas.offsetWidth * state.zoom) / 2;
+        state.panY = (els.viewport.clientHeight - els.canvas.offsetHeight * state.zoom) / 2;
+        applyTransform();
+        requestAnimationFrame(updateEdges);
+      }
+
+      function resetView() {
+        state.zoom = 0.76;
+        state.panX = 24;
+        state.panY = 20;
+        applyTransform();
+      }
+
+      document.querySelectorAll("[data-mode-button]").forEach(button => {
+        button.addEventListener("click", () => {
+          if (button.dataset.modeButton === state.mode) return;
+          state.mode = button.dataset.modeButton;
+          state.flow = "all";
+          document.querySelectorAll("[data-mode-button]").forEach(item => item.classList.toggle("active", item === button));
+          document.querySelectorAll(".flow-button").forEach(item => item.classList.toggle("active", item.dataset.flow === "all"));
+          renderMode();
+        });
+      });
+
+      document.querySelectorAll(".flow-button").forEach(button => button.addEventListener("click", () => setFlow(button.dataset.flow)));
+      els.playButton.addEventListener("click", playWalkthrough);
+
+      els.search.addEventListener("input", () => {
+        els.searchClear.classList.toggle("visible", Boolean(els.search.value));
+        state.selectedNode = null;
+        applyFilters();
+        if (!els.search.value) renderOverview();
+      });
+      els.searchClear.addEventListener("click", () => {
+        els.search.value = "";
+        els.searchClear.classList.remove("visible");
+        applyFilters();
+        renderOverview();
+        els.search.focus();
+      });
+
+      els.viewport.addEventListener("pointerdown", event => {
+        if (event.target.closest("button") || event.target.closest(".canvas-controls") || event.target.closest(".layer-controls")) return;
+        state.isDragging = true;
+        state.dragStartX = event.clientX;
+        state.dragStartY = event.clientY;
+        state.panStartX = state.panX;
+        state.panStartY = state.panY;
+        els.viewport.classList.add("dragging");
+        els.viewport.setPointerCapture(event.pointerId);
+      });
+      els.viewport.addEventListener("pointermove", event => {
+        if (!state.isDragging) return;
+        state.panX = state.panStartX + event.clientX - state.dragStartX;
+        state.panY = state.panStartY + event.clientY - state.dragStartY;
+        applyTransform();
+      });
+      function endDrag(event) {
+        if (!state.isDragging) return;
+        state.isDragging = false;
+        els.viewport.classList.remove("dragging");
+        if (event?.pointerId !== undefined && els.viewport.hasPointerCapture(event.pointerId)) els.viewport.releasePointerCapture(event.pointerId);
+      }
+      els.viewport.addEventListener("pointerup", endDrag);
+      els.viewport.addEventListener("pointercancel", endDrag);
+      els.viewport.addEventListener("wheel", event => {
+        event.preventDefault();
+        const rect = els.viewport.getBoundingClientRect();
+        const factor = event.deltaY < 0 ? 1.09 : 0.92;
+        setZoom(state.zoom * factor, event.clientX - rect.left, event.clientY - rect.top);
+      }, { passive: false });
+
+      document.getElementById("zoomInButton").addEventListener("click", () => setZoom(state.zoom * 1.12));
+      document.getElementById("zoomOutButton").addEventListener("click", () => setZoom(state.zoom / 1.12));
+      document.getElementById("fitButton").addEventListener("click", fitToViewport);
+      document.getElementById("resetViewButton").addEventListener("click", resetView);
+      document.getElementById("printButton").addEventListener("click", () => window.print());
+
+      document.getElementById("themeButton").addEventListener("click", () => {
+        const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+        document.documentElement.dataset.theme = next;
+        safeStorage.set("architecture-theme", next);
+        addLog("theme.changed", next);
+      });
+
+      document.getElementById("openInspectorButton").addEventListener("click", () => els.inspector.classList.add("open"));
+      document.getElementById("closeInspectorButton").addEventListener("click", () => els.inspector.classList.remove("open"));
+      document.getElementById("clearLogButton").addEventListener("click", () => { els.eventLog.innerHTML = ""; });
+
+      document.addEventListener("keydown", event => {
+        if (event.key === "/" && document.activeElement !== els.search) {
+          event.preventDefault();
+          els.search.focus();
+        }
+        if (event.key === "Escape") {
+          if (els.search.value) {
+            els.search.value = "";
+            els.searchClear.classList.remove("visible");
+          }
+          state.selectedNode = null;
+          stopWalkthrough();
+          applyFilters();
+          renderOverview();
+          els.inspector.classList.remove("open");
+        }
+      });
+
+      window.addEventListener("resize", () => {
+        updateEdges();
+        if (window.innerWidth > 1120) els.inspector.classList.remove("open");
+      });
+
+      const savedTheme = safeStorage.get("architecture-theme");
+      if (savedTheme === "light" || savedTheme === "dark") document.documentElement.dataset.theme = savedTheme;
+
+      renderMode();
+      addLog("architecture.loaded", "interactive demo ready");
+      window.__ARCH_DEMO_READY__ = true;
+    })();
+  </script>
+</body>
+</html>

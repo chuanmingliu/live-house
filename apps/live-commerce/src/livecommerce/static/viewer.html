@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Viewer · Live House</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <a class="brand" href="/" style="text-decoration:none"><span class="brand-mark">FL</span> Viewer</a>
+      <div class="row wrap">
+        <span id="connectionBadge" class="badge">disconnected</span>
+        <span id="sessionBadge" class="badge mono">no session</span>
+      </div>
+    </header>
+
+    <section class="panel" style="margin-bottom:1rem">
+      <div class="row wrap">
+        <label class="grow">
+          <span class="small muted">Live session ID</span>
+          <input id="sessionInput" placeholder="live_…" autocomplete="off" />
+        </label>
+        <button id="joinButton">Join live room</button>
+      </div>
+      <div id="statusLine" class="status-line small"></div>
+    </section>
+
+    <section class="grid">
+      <div class="stack">
+        <div class="panel">
+          <div class="video-wrap">
+            <video id="programVideo" muted autoplay playsinline loop controls></video>
+            <div class="video-overlay">
+              <span id="liveChip" class="badge live live-chip">OFF AIR</span>
+              <span id="programClock" class="badge program-clock mono">00:00</span>
+              <div class="lower-third">
+                <div id="productToast" class="product-toast" hidden>
+                  <img id="toastImage" alt="" />
+                  <div>
+                    <strong id="toastTitle"></strong>
+                    <div id="toastPrice" class="price"></div>
+                    <div id="toastInventory" class="small muted"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="small muted">The starter switches media in the browser to demonstrate segment insertion. Production replaces this with a cloud compositor and one continuous CDN program.</p>
+        </div>
+
+        <div class="panel stack">
+          <div class="toolbar">
+            <h2 style="margin:0">Audience poll</h2>
+            <span id="pollState" class="badge">none</span>
+          </div>
+          <div id="pollContainer" class="poll muted">No poll is open.</div>
+        </div>
+
+        <div class="panel stack">
+          <h2 style="margin:0">Live chat</h2>
+          <div id="chatList" class="chat-list"></div>
+          <form id="chatForm" class="row">
+            <input id="chatInput" class="grow" maxlength="280" placeholder="Say something…" />
+            <button type="submit">Send</button>
+          </form>
+        </div>
+      </div>
+
+      <aside class="stack">
+        <div class="panel stack">
+          <div class="toolbar">
+            <h2 style="margin:0">Featured product</h2>
+            <span id="cartBadge" class="badge">0 items</span>
+          </div>
+          <div id="featuredProduct" class="muted">The host has not pinned a product.</div>
+          <button id="checkoutButton" class="success" disabled>Complete mock checkout</button>
+          <div id="commerceStatus" class="status-line small"></div>
+        </div>
+
+        <div class="panel stack">
+          <h2 style="margin:0">All products</h2>
+          <div id="productList" class="product-list"></div>
+        </div>
+
+        <div class="panel stack">
+          <h3 style="margin:0">Room telemetry</h3>
+          <div class="small muted">Last event sequence</div>
+          <div id="sequenceValue" class="mono">0</div>
+          <div class="small muted">Viewer identity</div>
+          <div id="viewerIdentity" class="mono small"></div>
+        </div>
+      </aside>
+    </section>
+  </main>
+  <script type="module" src="/static/viewer.js"></script>
+</body>
+</html>

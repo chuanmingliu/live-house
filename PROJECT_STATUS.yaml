@@ -1,0 +1,93 @@
+project:
+  name: Live House
+  slug: live-house
+  version: 0.1.0
+  status: development
+  updated_at: 2026-09-01
+  objective: >-
+    Build an AI-native realtime live-commerce platform with continuous media,
+    realtime audience participation, synchronized commerce, and fal-powered
+    generated segments that degrade safely.
+
+canonical_application:
+  path: apps/live-commerce
+  language: Python
+  framework: FastAPI
+  package: fal-live-commerce-starter
+  package_version: 0.1.0
+  runtime: Python 3.11 or 3.12
+
+implemented:
+  - live session lifecycle
+  - REST and WebSocket APIs
+  - sequenced room events
+  - snapshot and replay recovery
+  - chat and presence heartbeat
+  - deterministic polls and voting
+  - product catalog and timeline-aware pinning
+  - cart and idempotent checkout
+  - atomic inventory deduction
+  - AI segment state machine
+  - generation deadlines and stale-result protection
+  - mock generation mode
+  - fal queued submission boundary
+  - typed H3 Max text-to-video adapter
+  - ED25519 fal webhook verification
+  - duplicate webhook handling
+  - host studio and viewer application
+  - interactive architecture page
+  - OpenAPI contract
+  - Docker and wheel packaging
+  - automated tests
+
+validation:
+  last_known_test_result: 21 passed
+  required_command: make test
+  note: Re-run locally because this status is a handoff record, not a substitute for CI.
+
+current_substitutions:
+  persistence: SQLite
+  distributed_events: in-process room hub
+  workflow: asyncio task
+  media_plane: browser media-source switching
+  identity: demo query parameter
+  checkout: local mock
+  moderation: minimal seam
+
+next_increment:
+  id: 0.2
+  name: Real fal staging integration
+  tasks:
+    - exercise H3 Max adapter against staging
+    - add typed reference-to-video adapter
+    - add private reference asset upload and retention
+    - add provider status reconciliation and cancellation
+    - persist provider cost and timing metadata
+    - validate signed callbacks over public HTTPS
+    - add opt-in staging contract test
+  definition_of_done: >-
+    One real generated segment reaches READY through a verified signed webhook;
+    duplicate, malformed, stale, and late callbacks are harmless; output is copied
+    into controlled storage with recorded lineage and cost metadata.
+
+subsequent_increments:
+  - id: 0.3
+    name: Durable platform foundation
+  - id: 0.4
+    name: Real media plane
+  - id: 0.5
+    name: Moderation and media quality
+  - id: 0.6
+    name: Production commerce
+  - id: 0.7
+    name: Audience-directed show director
+
+invariants:
+  - commerce data is authoritative
+  - AI cannot directly mutate commercial truth
+  - events are server-sequenced per session
+  - UI synchronization uses program time
+  - generated content has deadline, QA, approval, and fallback
+  - credentials remain server-side
+  - provider callbacks and commerce mutations are idempotent
+  - AI failure cannot stop playback or checkout
